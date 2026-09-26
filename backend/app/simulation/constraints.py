@@ -32,11 +32,14 @@ class NetMeta:
     trafo_ids: list[int]
     trafo_names: list[str]
     supplied_bus_mask: np.ndarray = field(default_factory=lambda: np.array([]))  # buses with load or generation
+    head_line_pos: list[int] = field(default_factory=list)  # positions of feeder-head lines (from a trafo LV bus)
 
     @classmethod
     def from_net(cls, net: pp.pandapowerNet) -> "NetMeta":
         bus_ids = [int(i) for i in net.bus.index]
         loaded = set(net.load["bus"].astype(int)) | set(net.sgen["bus"].astype(int))
+        lv = set(net.trafo["lv_bus"].astype(int))
+        head = [k for k, fb in enumerate(net.line["from_bus"].astype(int)) if fb in lv]
         return cls(
             bus_ids=bus_ids,
             bus_names=[str(n) for n in net.bus["name"]],
@@ -46,6 +49,7 @@ class NetMeta:
             trafo_ids=[int(i) for i in net.trafo.index],
             trafo_names=[str(n) for n in net.trafo["name"]],
             supplied_bus_mask=np.array([b in loaded for b in bus_ids]),
+            head_line_pos=head,
         )
 
 
@@ -106,6 +110,18 @@ def check_step(pf: PFResult, meta: NetMeta, c: Constraints) -> list[StepViolatio
                 out.append(StepViolation("REVERSE_FLOW", "trafo", tid, meta.trafo_names[k], round(rev, 4), c.reverse_flow_limit_mw, sev, True))
             elif c.reverse_flow_limit_mw is None:
                 out.append(StepViolation("REVERSE_FLOW", "trafo", tid, meta.trafo_names[k], round(rev, 4), float("nan"), "INFO", False))
+    # Feeder-head reverse flow: the ~20 MW aggregated CIGRE load at buses 1/12 masks export at the
+    # transformer, so we also watch the first line of each feeder (p_from < 0 = flow towards the substation).
+    for k in meta.head_line_pos:
+        p = pf.line_p_from[k]
+        if p < -1e-6:
+            rev = -float(p)
+            lid = meta.line_ids[k]
+            if c.reverse_flow_limit_mw is not None and rev > c.reverse_flow_limit_mw:
+                sev = _sev_loading(100.0 * (rev - c.reverse_flow_limit_mw) / max(c.reverse_flow_limit_mw, 1e-3))
+                out.append(StepViolation("REVERSE_FLOW", "line", lid, meta.line_names[k], round(rev, 4), c.reverse_flow_limit_mw, sev, True))
+            elif c.reverse_flow_limit_mw is None:
+                out.append(StepViolation("REVERSE_FLOW", "line", lid, meta.line_names[k], round(rev, 4), float("nan"), "INFO", False))
     if pf.load_p > 1e-6:
         loss_pct = 100.0 * pf.losses_mw / pf.load_p
         if loss_pct > c.loss_pct_max:
@@ -123,9 +139,9 @@ def excess(pf: PFResult, meta: NetMeta, c: Constraints, include_reverse: bool = 
         return {"over_v": np.inf, "under_v": np.inf, "line": np.inf, "trafo": np.inf, "reverse": np.inf}
     vm = pf.bus_vm[meta.mv_mask]
     vm = vm[~np.isnan(vm)]
-    rev = 0.0
     if include_reverse and c.reverse_flow_limit_mw is not None and len(pf.trafo_p_hv):
-        rev = float(np.max(-pf.trafo_p_hv)) - c.reverse_flow_limit_mw
+        flows = list(-pf.trafo_p_hv) + [-pf.line_p_from[k] for k in meta.head_line_pos]
+        rev = float(max(flows)) - c.reverse_flow_limit_mw
     else:
         rev = -np.inf
     return {

@@ -18,3 +18,7 @@
 - Synthetic clear-sky dataset is always registered (clearly labelled SYNTHETIC); Kaggle Plant 1 is the default when present.
 - Uploaded datasets stored as normalized CSV + .meta.json sidecar in data/processed/ (registry scans them); DB row added by the API.
 - Cloud event = trapezoidal dip (full `depth` in middle half of the window), applied to actual PV only.
+- Reverse flow is also tracked at feeder-head lines (Line 1-2, Line 12-13; p_from < 0) because the ~20 MW aggregated CIGRE load at buses 1/12 means the transformers never reverse at realistic PV levels.
+- Finding: on CIGRE MV feeder 1, line thermal limits (5 MVA overhead lines) bind at about the same PV level as the 1.05 pu voltage limit, so surge scenarios show OVERVOLTAGE + LINE_OVERLOAD together. Kept as-is (real physics).
+- QSTS: scheduled levers (`always=True`, e.g. a replayed plan) act every step; corrective levers act only on violated steps, in order, stopping once the step is safe. A final authoritative PF is always run with the chosen control.
+- Built phase 5 (actions) before phase 4 (calibration): calibration needs the battery/curtailment actions to find the "battery insufficient" and "curtailment > cap" thresholds.

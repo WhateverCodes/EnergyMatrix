@@ -7,7 +7,7 @@ Resume protocol: read this file and `docs/PROJECT_BRIEF.md`, continue from the f
 | 0 | Repo skeleton, brief, CLAUDE.md, Makefile, venv, pinned versions, `/api/health`, Vite boots | `make test` runs | DONE |
 | 1 | Network factory, single-step PF, constraint engine, topology, storage sign test | unit tests; docs/simulation.md started | DONE |
 | 2 | Kaggle adapter (+ synthetic fallback), CSV adapter, 8 load profiles, mapping | parsing/timestamp/gap/profile tests | DONE |
-| 3 | QSTS engine with SOC coupling, metrics | SOC limits + efficiency tests | |
+| 3 | QSTS engine with SOC coupling, metrics | SOC limits + efficiency tests | DONE |
 | 4 | Calibration script, hosting capacity | calibration.json produced + documented | |
 | 5 | Actions A1–A5, evaluator, objective, infeasibility, explanations | per-action tests; baseline immutability | |
 | 6 | Scenario library S1–S8 | acceptance tests for all outcome classes | |
@@ -28,3 +28,7 @@ network_factory (CIGRE MV + 4 sectionalizers, cached template), powerflow (Power
 
 ### Phase 2 — done
 datasets/ (base schema + validator, SolarKaggleAdapter with per-file date format detection, inverter aggregation, gap handling; SyntheticClearSkyAdapter; generic CSV upload with mapping/validation report; LoadDatasetAdapter; registry), load_profiles (8 deterministic profiles), simulation/mapping.py (ScenarioConfig → ScenarioInputs on a working net copy). 27 tests pass.
+
+### Phase 3 — done
+qsts.py (StepControl/StepContext/levers, SOC dynamics with sqrt(eta) split, clamps to SOC/p_max, authoritative final PF per step), metrics.py (energies, utilization, reverse flow incl. feeder head). 21-step window ≈ 0.18 s warm. 33 tests pass.
+Note: phase 5 built before phase 4 (calibration depends on actions).
