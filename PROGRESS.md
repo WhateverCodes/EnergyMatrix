@@ -6,7 +6,7 @@ Resume protocol: read this file and `docs/PROJECT_BRIEF.md`, continue from the f
 |---|---|---|---|
 | 0 | Repo skeleton, brief, CLAUDE.md, Makefile, venv, pinned versions, `/api/health`, Vite boots | `make test` runs | DONE |
 | 1 | Network factory, single-step PF, constraint engine, topology, storage sign test | unit tests; docs/simulation.md started | DONE |
-| 2 | Kaggle adapter (+ synthetic fallback), CSV adapter, 8 load profiles, mapping | parsing/timestamp/gap/profile tests | |
+| 2 | Kaggle adapter (+ synthetic fallback), CSV adapter, 8 load profiles, mapping | parsing/timestamp/gap/profile tests | DONE |
 | 3 | QSTS engine with SOC coupling, metrics | SOC limits + efficiency tests | |
 | 4 | Calibration script, hosting capacity | calibration.json produced + documented | |
 | 5 | Actions A1–A5, evaluator, objective, infeasibility, explanations | per-action tests; baseline immutability | |
@@ -25,3 +25,6 @@ Skeleton, brief, CLAUDE.md, Makefile, dev.sh, venv (py3.11), pinned requirements
 
 ### Phase 1 — done
 network_factory (CIGRE MV + 4 sectionalizers, cached template), powerflow (PowerFlowRunner with recycle, NON_CONVERGENCE), constraints (all 8 types, severity, summarize), topology (128 configs → 17 radial). 13 unit tests pass incl. storage + trafo sign conventions.
+
+### Phase 2 — done
+datasets/ (base schema + validator, SolarKaggleAdapter with per-file date format detection, inverter aggregation, gap handling; SyntheticClearSkyAdapter; generic CSV upload with mapping/validation report; LoadDatasetAdapter; registry), load_profiles (8 deterministic profiles), simulation/mapping.py (ScenarioConfig → ScenarioInputs on a working net copy). 27 tests pass.

@@ -9,3 +9,12 @@
 - Installed numba 0.67 (self-contained wheels, no OpenMP) to silence pandapower's slow-path warning.
 - pandapower `recycle={"bus_pq": True}` used within a fixed topology (verified equal to fresh solve by test); rebuilt on any topology change.
 - Frontend scaffolded with Vite 8 + Tailwind 4 (`@tailwindcss/vite`); React pinned to 18 as specified.
+- Kaggle: AC_POWER used (Plant 1 DC is ~10.2x AC). Missing inverters: plant total = mean per reporting inverter x 22, flagged `missing_inverters`. Capacity = 99.5th percentile of plant AC; pu clipped to [0,1].
+- Kaggle: gaps <= 1 h interpolated; longer gaps become 0 if irradiation is 0 (`night_zero`), else `long_gap` (NaN; scenario windows containing them are rejected with DATA_GAP).
+- Default demo day 2020-05-25 (Plant 1): highest-energy, smoothest midday profile in the dataset.
+- Consumer profile is ADDED as a new load at the target bus (not replacing CIGRE loads) so background load stays at documented CIGRE magnitudes.
+- Background shapes: `Load R*` → Residential Society normalized, `Load CI*` → Commercial Building normalized.
+- Inverter apparent rating = 1.1 x PV rating (typical oversizing) — gives reactive headroom at full output.
+- Synthetic clear-sky dataset is always registered (clearly labelled SYNTHETIC); Kaggle Plant 1 is the default when present.
+- Uploaded datasets stored as normalized CSV + .meta.json sidecar in data/processed/ (registry scans them); DB row added by the API.
+- Cloud event = trapezoidal dip (full `depth` in middle half of the window), applied to actual PV only.
