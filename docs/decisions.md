@@ -33,3 +33,5 @@
 - "All levers" candidate runs with whichever levers are available (e.g. switching + reactive + curtailment when the battery is unavailable) and notes the exclusion; the pair combinations are unavailable if one part is. Without this, "no feasible" would be claimed while an untested combination could work.
 - Calibration: clear day = max(energy − 3·roughness) over 09:00–16:00; cloudy day = max roughness. Thresholds recorded in simulation/calibration.json.
 - Failure reasons condensed per note kind with step span and the largest value ("up to X%").
+- Phase 6 acceptance covers S1–S6 now; S7/S8 (predictive mode) JSON files are defined but asserted in phase 10 once forecasting exists — keeps the P0 slice first as the brief requires.
+- S6 uses "battery full (SOC 90 %)" rather than "disabled" so the failure reasons show SOC saturation.

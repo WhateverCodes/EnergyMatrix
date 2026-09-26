@@ -1,0 +1,34 @@
+{
+  "id": "S7",
+  "title": "Cloud event: plan made on forecast, replayed on actuals",
+  "expected_outcome": "PLAN_FAILED_ON_ACTUALS",
+  "mode": "predictive",
+  "description": "At 11:30, during a passing cloud, the forecaster sees depressed recent output and plans for low PV. When the cloud clears, actual PV returns to full and the forecast-based plan fails on actuals.",
+  "parameter_rationale": "pv_multiplier near battery_alone_limit; cloud before planning time",
+  "config": {
+    "name": "S7 Cloud event",
+    "date": "2020-05-25",
+    "start": "10:00",
+    "end": "15:00",
+    "pv_multiplier": 48,
+    "consumer_profile": "residential_society",
+    "target_bus": 11,
+    "battery": {
+      "enabled": true,
+      "bus": 11,
+      "soc_init_pct": 50
+    },
+    "cloud_event": {
+      "start": "10:30",
+      "duration_min": 75,
+      "depth": 0.75
+    }
+  },
+  "predictive": {
+    "t0": "11:30",
+    "horizon_steps": 8,
+    "model": "persistence_last",
+    "plan_on": "p50"
+  },
+  "provenance": "simulation/calibration.json thresholds (clear day 2020-05-25, window 10:00-15:00)"
+}

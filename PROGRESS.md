@@ -10,7 +10,7 @@ Resume protocol: read this file and `docs/PROJECT_BRIEF.md`, continue from the f
 | 3 | QSTS engine with SOC coupling, metrics | SOC limits + efficiency tests | DONE |
 | 4 | Calibration script, hosting capacity | calibration.json produced + documented | DONE |
 | 5 | Actions A1–A5, evaluator, objective, infeasibility, explanations | per-action tests; baseline immutability | DONE |
-| 6 | Scenario library S1–S8 | acceptance tests for all outcome classes | |
+| 6 | Scenario library S1–S8 | acceptance tests for all outcome classes | S1–S6 DONE; S7/S8 in phase 10 |
 | 7 | FastAPI endpoints, SQLite, error handling | integration tests S2 + S6 | |
 | 8 | Frontend: Builder, Grid Twin, Heal & Verify | P0 path; component tests | |
 | 9 | Live Lab sliders + debounce | snapshot latency logged | |
@@ -39,3 +39,6 @@ Findings: switching (2 ops) is very effective on CIGRE feeder 1; mult≈70 w/o b
 
 ### Phase 4 — done
 scripts/calibrate.py (≈80 s): thresholds mult 42 / 46 / 52 / 80 (see docs/simulation.md §6); hosting_capacity.py (per-bus bisection, cached). calibration.json written.
+
+### Phase 6 — S1–S6 done
+simulation/scenarios/S1..S8.json with rationale relative to calibration thresholds; scenarios/library.py; tests/acceptance/test_scenarios.py (S1–S6 outcome classes, 7 tests, ~35 s). S7/S8 predictive acceptance pending phase 10.
