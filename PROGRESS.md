@@ -8,7 +8,7 @@ Resume protocol: read this file and `docs/PROJECT_BRIEF.md`, continue from the f
 | 1 | Network factory, single-step PF, constraint engine, topology, storage sign test | unit tests; docs/simulation.md started | DONE |
 | 2 | Kaggle adapter (+ synthetic fallback), CSV adapter, 8 load profiles, mapping | parsing/timestamp/gap/profile tests | DONE |
 | 3 | QSTS engine with SOC coupling, metrics | SOC limits + efficiency tests | DONE |
-| 4 | Calibration script, hosting capacity | calibration.json produced + documented | |
+| 4 | Calibration script, hosting capacity | calibration.json produced + documented | DONE |
 | 5 | Actions A1–A5, evaluator, objective, infeasibility, explanations | per-action tests; baseline immutability | DONE |
 | 6 | Scenario library S1–S8 | acceptance tests for all outcome classes | |
 | 7 | FastAPI endpoints, SQLite, error handling | integration tests S2 + S6 | |
@@ -36,3 +36,6 @@ Note: phase 5 built before phase 4 (calibration depends on actions).
 ### Phase 5 — done (before phase 4)
 actions/ base (bisect_min w/ non-monotone guard), battery, reactive, curtailment (capped, required always reported), switching (128→17 radial, screened), combined (ordered); evaluator (independent copies, process pool, cache, re-rank by weights), objective (lexicographic + J), infeasibility (per-candidate why + minimum intervention), explain/templates. 45 tests pass. Warm evaluation 7–9 s.
 Findings: switching (2 ops) is very effective on CIGRE feeder 1; mult≈70 w/o battery → infeasible (≈42 % curtailment needed vs 20 % cap).
+
+### Phase 4 — done
+scripts/calibrate.py (≈80 s): thresholds mult 42 / 46 / 52 / 80 (see docs/simulation.md §6); hosting_capacity.py (per-bus bisection, cached). calibration.json written.

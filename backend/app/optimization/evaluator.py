@@ -12,6 +12,7 @@ import dataclasses
 import hashlib
 import json
 import os
+import re
 from collections import OrderedDict
 from concurrent.futures import ProcessPoolExecutor
 
@@ -103,16 +104,16 @@ def failure_analysis(res: QSTSResult, inp: ScenarioInputs) -> dict:
     if first is None:
         return {}
     b = binding_violation(first)
-    why: list[str] = []
-    for r in res.records:
-        for n in r.notes:
-            if n not in why:
-                why.append(n)
-    if inp.battery is not None:
+    notes = [n for r in res.records for n in r.notes]
+    why = _condense(notes)
+    used_battery = any("battery" in r.levers_used for r in res.records) or any("battery" in n for n in notes)
+    if inp.battery is not None and used_battery:
         smax = 100 * inp.battery.soc_max
         sat = next((r for r in res.records if r.soc_pct is not None and r.soc_pct >= smax - 1e-3), None)
         if sat is not None:
             why.insert(0, f"battery SOC reached {smax:.0f}% at {sat.label}")
+    if not why and b is not None:
+        why.append(f"{b['type'].replace('_', ' ').lower()} at {b['name']} remains")
     failing = [r.label for r in res.records if r.status != "SAFE"]
     return {
         "first_failing_step": first.label,
@@ -120,28 +121,41 @@ def failure_analysis(res: QSTSResult, inp: ScenarioInputs) -> dict:
         "binding_constraint": None if b is None else {
             "type": b["type"], "element": b["element"], "id": b["id"], "name": b["name"],
             "value": b["value"], "limit": b["limit"]},
-        "why": _condense(why),
+        "why": why,
     }
 
 
+_TIME = re.compile(r" at (\d\d:\d\d)")
+_NUM = re.compile(r"\d+\.\d+")
+
+
 def _condense(notes: list[str], limit: int = 6) -> list[str]:
-    """Collapse per-step notes like '... at 11:45' into one line per note kind with its step range."""
-    groups: "OrderedDict[str, list[str]]" = OrderedDict()
+    """Collapse per-step notes into one line per kind with its step range, keeping the note with the
+    largest leading number verbatim, e.g. 12 x 'required curtailment 45.3% exceeds 20% cap at 10:00' ->
+    'required curtailment up to 48.4% exceeds 20% cap (10:00–12:45, 12 steps)'."""
+    groups: "OrderedDict[str, dict]" = OrderedDict()
     for n in notes:
-        if " at " in n and n.rsplit(" at ", 1)[1][:2].isdigit():
-            head, tail = n.rsplit(" at ", 1)
-            step = tail.split(",")[0].split(" ")[0]
-            rest = tail[len(step):]
-            groups.setdefault(head + "{}" + rest, []).append(step)
-        else:
-            groups.setdefault(n, [])
+        m = _TIME.search(n)
+        text = _TIME.sub("", n, count=1)
+        g = groups.setdefault(_NUM.sub("#", text), {"steps": [], "best": text, "best_num": None, "nums": set()})
+        if m:
+            g["steps"].append(m.group(1))
+        num = _NUM.search(text)
+        if num:
+            v = float(num.group(0))
+            g["nums"].add(v)
+            if g["best_num"] is None or v > g["best_num"]:
+                g["best"], g["best_num"] = text, v
     out = []
-    for pattern, steps in groups.items():
+    for g in groups.values():
+        text = g["best"]
+        if len(g["nums"]) > 1:
+            text = _NUM.sub(lambda mm: "up to " + mm.group(0), text, count=1)
+        steps = g["steps"]
         if steps:
-            span = steps[0] if len(steps) == 1 else f"{steps[0]}–{steps[-1]} ({len(steps)} steps)"
-            out.append(pattern.format(" at " + span) if "{}" in pattern else pattern)
-        else:
-            out.append(pattern)
+            span = steps[0] if len(steps) == 1 else f"{steps[0]}–{steps[-1]}, {len(steps)} steps"
+            text = f"{text} ({span})"
+        out.append(text)
     return out[:limit]
 
 

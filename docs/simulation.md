@@ -43,3 +43,48 @@ line 10-11 at 110 %; 8 MW → 1.083 pu, 145 %.
 internal admittance model (`recycle={"bus_pq": True}`, verified to match a fresh solve to 1e-8 pu),
 cutting a solve from ≈ 23 ms to ≈ 10 ms. Any topology change forces a rebuild. `LoadflowNotConverged`
 becomes a `NON_CONVERGENCE` step status — never skipped.
+
+## 4. QSTS and battery state of charge
+
+Steps are 15 min (dt = 0.25 h), simulated in order. Per step the loads and available PV are set,
+corrective levers (if any) adjust the controls using real power flows, a final authoritative PF is run,
+and the constraint engine checks it. Battery energy is carried between steps:
+
+```
+charging  (p > 0):  SOC[k+1] = SOC[k] + p · η_c · dt / E
+discharge (p < 0):  SOC[k+1] = SOC[k] + p / η_d · dt / E
+η_c = η_d = √η_rt = √0.92 ≈ 0.959,   SOC ∈ [10 %, 90 %]
+max charge    = min(p_max, (SOC_max − SOC) · E / (η_c · dt))
+max discharge = min(p_max, (SOC − SOC_min) · E · η_d / dt)
+```
+
+Loads use a fixed 0.95 lagging power factor (Q = P · tan φ).
+
+## 5. Why PV raises voltage, and why reactive power is only a partial fix
+
+Across a line with resistance R and reactance X, sending P and Q gives approximately
+**ΔV ≈ (R·P + X·Q) / V**. Reverse PV export (P flowing back towards the substation) makes ΔV
+negative along the direction of supply, so the far end of the feeder rises above the substation voltage.
+Absorbing reactive power (Q < 0) cancels part of R·P. On feeder 1's overhead lines R/X ≈ 0.70, so
+1 MVAr has about 1.4× the voltage effect of 1 MW. But at full PV output an inverter with S = 1.1·P has
+only √(1.21 − 1) ≈ 0.46 pu of Q headroom, and absorbed Q *adds* current. So reactive support clears
+mild overvoltage and cannot help a thermal overload; on feeder 2's cables (R/X ≈ 1.39) it is weaker still.
+
+## 6. Calibration results (`make calibrate` → simulation/calibration.json)
+
+Window 10:00–15:00 on the clearest day of Kaggle Plant 1 (**2020-05-25**; roughest/cloudiest day
+2020-06-06). Distributed rooftop PV = CIGRE nominal PV (0.21 MW) × multiplier.
+
+| Threshold | Multiplier | Installed PV |
+|---|---|---|
+| First baseline violation (line 1-2/2-3 overload + overvoltage) | 42 | 8.8 MW |
+| Battery alone (2 MW / 4 MWh, SOC 20 %) still sufficient | ≤ 46 | 9.7 MW |
+| Curtailment alone needs more than the 20 % cap | ≥ 52 | 10.9 MW |
+| No candidate feasible, battery unavailable (all other levers combined) | ≥ 80 | 16.8 MW |
+
+**Hosting capacity** (multiplier 20, worst case = 12:15 PV with 10:00 load): about **4.1–4.2 MW** extra
+at any feeder-1 bus, bound by line 1-2 / 2-3 thermal limits (5 MVA overhead line). Feeder 2: 7.5 MW at
+bus 13 (line 12-13) and 5.0 MW at bus 14 (overvoltage). On this benchmark, thermal capacity at the
+feeder head, not voltage, limits PV on feeder 1.
+
+Scenario parameters in `simulation/scenarios/*.json` are set relative to these thresholds.

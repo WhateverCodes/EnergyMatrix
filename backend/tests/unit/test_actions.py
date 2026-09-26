@@ -159,7 +159,7 @@ def test_unavailable_battery_reported_not_simulated():
 
 
 def test_infeasibility_report_content():
-    r = evaluate(cfg(pv_multiplier=75, battery=NO_BATT), use_cache=False)
+    r = evaluate(cfg(pv_multiplier=88, battery=NO_BATT), use_cache=False)  # above calibrated infeasibility threshold (80)
     assert r["status"] == "NO_FEASIBLE_SOLUTION_UNDER_CURRENT_CONSTRAINTS"
     inf = r["infeasibility"]
     mi = inf["minimum_intervention"]
