@@ -1,0 +1,13 @@
+backend/.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+node_modules/
+frontend/dist/
+data/raw/
+data/processed/*
+!data/processed/.gitkeep
+backend/gridtwin.db
+*.db
+.DS_Store
+.env
