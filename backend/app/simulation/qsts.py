@@ -17,6 +17,7 @@ SOC dynamics (dt = 0.25 h, E = energy capacity, p > 0 charging):
 """
 from __future__ import annotations
 
+import math
 from dataclasses import dataclass, field
 from typing import Protocol
 
@@ -32,7 +33,8 @@ from app.simulation.topology import current_states
 @dataclass
 class StepControl:
     battery_p_mw: float = 0.0  # >0 charging
-    pv_q_mvar: np.ndarray | None = None  # per PV sgen, <0 absorbing
+    pv_q_mvar: np.ndarray | None = None  # requested per PV sgen, <0 absorbing
+    pv_q_effective: np.ndarray | None = None  # after clipping to inverter capability (what was applied)
     curtail_frac: float = 0.0  # uniform fraction of available PV removed
     required_curtail_frac: float | None = None  # min fraction needed (may exceed cap)
     notes: list[str] = field(default_factory=list)
@@ -43,6 +45,13 @@ class Lever(Protocol):
     key: str
 
     def step(self, sc: "StepContext", ctrl: StepControl, pf: PFResult) -> PFResult: ...
+
+
+def q_capability(p_mw: np.ndarray, s_mva: np.ndarray, min_pf: float) -> np.ndarray:
+    """Inverter reactive limit: |Q| <= min(sqrt(S^2 - P^2), P * tan(acos(pf_min)))."""
+    circle = np.sqrt(np.clip(s_mva ** 2 - p_mw ** 2, 0.0, None))
+    pf_limit = np.abs(p_mw) * math.tan(math.acos(min_pf))
+    return np.minimum(circle, pf_limit)
 
 
 def battery_limits(bp: BatteryParams, soc: float) -> tuple[float, float]:
@@ -86,7 +95,12 @@ class StepContext:
         net = self.net
         pv_p = self.pv_avail * (1.0 - ctrl.curtail_frac)
         net.sgen.loc[self.inp.pv_idx, "p_mw"] = pv_p
-        q = ctrl.pv_q_mvar if ctrl.pv_q_mvar is not None else np.zeros(len(self.inp.pv_idx))
+        if ctrl.pv_q_mvar is not None:
+            cap = q_capability(pv_p, self.inp.pv_s_mva, self.c.min_inverter_pf)
+            q = np.clip(ctrl.pv_q_mvar, -cap, cap)  # never exceed inverter capability at this P
+        else:
+            q = np.zeros(len(self.inp.pv_idx))
+        ctrl.pv_q_effective = q
         net.sgen.loc[self.inp.pv_idx, "q_mvar"] = q
         if self.bp is not None:
             ctrl.battery_p_mw = self.clamp_battery(ctrl.battery_p_mw)
@@ -215,7 +229,7 @@ def run_qsts(inp: ScenarioInputs, levers: list[Lever] | None = None, soc_init: f
             pv_avail_mw=round(pv_avail, 5), pv_dispatched_mw=round(pv_disp, 5),
             curtailed_mw=round(pv_avail - pv_disp, 5), curtail_pct=round(100.0 * ctrl.curtail_frac, 3),
             required_curtail_pct=None if ctrl.required_curtail_frac is None else round(100.0 * ctrl.required_curtail_frac, 3),
-            pv_q_mvar=round(float(np.sum(ctrl.pv_q_mvar)) if ctrl.pv_q_mvar is not None else 0.0, 5),
+            pv_q_mvar=round(float(np.sum(ctrl.pv_q_effective)) if ctrl.pv_q_effective is not None else 0.0, 5),
             battery_p_mw=round(ctrl.battery_p_mw, 5),
             soc_pct=None if soc_after is None else round(100.0 * soc_after, 3),
             violations=[v.__dict__ for v in vs], notes=list(ctrl.notes), levers_used=list(ctrl.lever_log),

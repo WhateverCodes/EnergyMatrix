@@ -22,3 +22,11 @@
 - Finding: on CIGRE MV feeder 1, line thermal limits (5 MVA overhead lines) bind at about the same PV level as the 1.05 pu voltage limit, so surge scenarios show OVERVOLTAGE + LINE_OVERLOAD together. Kept as-is (real physics).
 - QSTS: scheduled levers (`always=True`, e.g. a replayed plan) act every step; corrective levers act only on violated steps, in order, stopping once the step is safe. A final authoritative PF is always run with the chosen control.
 - Built phase 5 (actions) before phase 4 (calibration): calibration needs the battery/curtailment actions to find the "battery insufficient" and "curtailment > cap" thresholds.
+- Bisection helper: if the upper bound is infeasible (e.g. 100 % curtailment creates undervoltage), coarse-scan 10 points for the first feasible value, then bisect below it. 8 bisection iterations (1/256 of range).
+- Reactive requests are kept separate from the effective (capability-clipped) Q so that a trial at P=0 cannot zero the request.
+- In combinations, the curtailment lever also tries releasing the reactive support (absorbed Q adds line current) and keeps whichever needs less curtailment.
+- Reactive support acts only on voltage violations; it is documented as unable to relieve thermal overload.
+- Switching: 17 radial configs screened with real PFs at the 4 worst baseline-violated steps; best = most steps safe, then least residual excess, then fewest switch ops; full QSTS then verifies it.
+- Candidates evaluated in a persistent ProcessPoolExecutor (min(8, cores)); GRIDTWIN_WORKERS=1 forces sequential. Pool pre-warmed at API startup.
+- If the baseline is SAFE, no other candidates are simulated (status NO_ACTION_NEEDED).
+- Minimum load reduction (deficit cases) is computed on the baseline network: feeder loads first, then all loads incl. substation aggregate.
