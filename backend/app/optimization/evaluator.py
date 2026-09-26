@@ -51,7 +51,7 @@ def _pool() -> ProcessPoolExecutor | None:
     return _POOL
 
 
-def _warm() -> int:
+def _warm(_: int = 0) -> int:
     """Import pandapower and JIT-compile the solver inside a worker."""
     from app.simulation.network_factory import new_net
     from app.simulation.powerflow import run_pf

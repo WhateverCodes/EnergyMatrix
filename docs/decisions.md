@@ -35,3 +35,9 @@
 - Failure reasons condensed per note kind with step span and the largest value ("up to X%").
 - Phase 6 acceptance covers S1–S6 now; S7/S8 (predictive mode) JSON files are defined but asserted in phase 10 once forecasting exists — keeps the P0 slice first as the brief requires.
 - S6 uses "battery full (SOC 90 %)" rather than "disabled" so the failure reasons show SOC saturation.
+- API responses are sanitized dicts (NaN/inf → null, numpy → Python) rather than exhaustive Pydantic response models; request bodies are fully typed Pydantic models. OpenAPI at /docs lists all routes.
+- Weight re-ranking: POST /api/actions/evaluate with the same config + new weights hits the evaluation cache and only re-ranks (no re-simulation).
+- /api/simulate/snapshot runs a single-step PF; if violated it adds a clearly-labelled single-step heal preview (battery then capped curtailment) so the SOC and cap sliders have a physical effect. Full-window verification stays in /api/actions/evaluate. Latencies kept in-process at GET /api/simulate/latency.
+- Hosting capacity exposed as GET /api/hosting-capacity?network&date&start&end&pv_multiplier and POST (full ScenarioConfig).
+- Saving a scenario (POST /api/history) evaluates (cache hit when already evaluated) and stores baseline + selected (default: recommended) intervention + final metrics + feasibility status.
+- Tests use a temp SQLite DB via GRIDTWIN_DB (tests/conftest.py).

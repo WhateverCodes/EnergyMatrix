@@ -2,17 +2,33 @@
 from __future__ import annotations
 
 import logging
+import threading
+from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
+from app.api import core, simulate
+from app.datasets.registry import all_datasets
+from app.db.models import init_db
 from app.errors import ApiError
+from app.optimization.evaluator import warm_pool
 
+logging.basicConfig(level=logging.INFO, format="%(asctime)s %(name)s %(levelname)s %(message)s")
 log = logging.getLogger("gridtwin")
 
-app = FastAPI(title="GRIDTWIN — Renewable Distribution Grid Digital Twin", version="1.0.0")
+
+@asynccontextmanager
+async def lifespan(_: FastAPI):
+    init_db()
+    all_datasets()  # parse datasets once; prints a clear warning if Kaggle files are missing
+    threading.Thread(target=warm_pool, daemon=True).start()
+    yield
+
+
+app = FastAPI(title="GRIDTWIN — Renewable Distribution Grid Digital Twin", version="1.0.0", lifespan=lifespan)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:5173", "http://127.0.0.1:5173"],
@@ -41,3 +57,7 @@ async def _unhandled(_: Request, exc: Exception):
 @app.get("/api/health")
 def health() -> dict:
     return {"status": "ok"}
+
+
+app.include_router(core.router)
+app.include_router(simulate.router)
