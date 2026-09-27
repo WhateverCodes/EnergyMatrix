@@ -48,7 +48,8 @@
   --color-s-battery: #199e70;
 
   /* play board */
-  --color-board: #2e2847;
+  --color-board: #141b2d;
+  --color-wire-ok: #3fd0e0;
   --color-tile-a: #3b355a;
   --color-tile-b: #36304f;
   --color-tile-line: #2a2540;
@@ -76,7 +77,8 @@
   --color-s-solar: #eda100;
   --color-s-demand: #2a78d6;
   --color-s-battery: #1baf7a;
-  --color-board: #cfe0c3;
+  --color-board: #d6ecf5;
+  --color-wire-ok: #1fa9bc;
   --color-tile-a: #b9d2a6;
   --color-tile-b: #aac894;
   --color-tile-line: #9cbb86;

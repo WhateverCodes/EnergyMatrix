@@ -57,14 +57,13 @@ export function Shell() {
     <NavLink to={to} className={`btn px-4 h-9 inline-flex items-center text-[14px] ${active ? 'bg-accent text-ink0' : 'bg-surface text-ink-2'}`}>{label}</NavLink>
   )
   return (
-    <div className="min-h-full flex flex-col">
+    <div className="h-screen flex flex-col">
       <header className="bg-surface border-b-3 border-ink0">
         <div className="flex flex-wrap items-center gap-3 px-3 py-2.5">
           <div className="flex items-center gap-2 shrink-0">
             <span className="chunk-sm bg-accent w-9 h-9 flex items-center justify-center"><Zap size={20} className="text-ink0" /></span>
             <div>
-              <div className="text-[20px] leading-5 font-bold tracking-wider">GRIDTWIN</div>
-              <div className="pixel text-[8px] text-ink-3">BUILD·FORECAST·STRESS·DETECT·HEAL·VERIFY</div>
+              <div className="text-[20px] leading-5 font-bold tracking-wider" title="Build → Forecast → Stress → Detect → Heal → Verify">GRIDTWIN</div>
             </div>
           </div>
           <div className="flex gap-2">
@@ -85,7 +84,7 @@ export function Shell() {
           </nav>
         )}
       </header>
-      <main className="flex-1 min-h-0"><Outlet /></main>
+      <main className="flex-1 min-h-0 overflow-auto"><Outlet /></main>
     </div>
   )
 }

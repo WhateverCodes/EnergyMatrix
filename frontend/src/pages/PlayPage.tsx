@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react'
 import { BatteryCharging, Gauge, Loader2, Pause, Play, Split, SunDim, Wand2, X } from 'lucide-react'
-import { IsoBoard, type Building } from '../features/play/IsoBoard'
+import { IsoScene, type Building } from '../features/play/IsoScene'
 import { useGridSession } from '../hooks/useGridSession'
 import { fmt } from '../utils/format'
 
@@ -85,7 +85,7 @@ export default function PlayPage() {
   const bannerCol = banner?.kind === 'ok' ? '#6EE7A8' : banner?.kind === 'bad' ? '#FF5D5D' : banner?.kind === 'busy' ? '#FFC857' : '#948CAB'
 
   return (
-    <div className="flex flex-col gap-3 p-3" style={{ height: 'calc(100vh - 62px)', minHeight: 760 }}>
+    <div className="flex flex-col gap-3 p-3" style={{ height: '100%', minHeight: 720 }}>
       {/* scenario buttons */}
       <div className="flex flex-wrap items-center gap-3">
         <span className="pixel text-[11px] text-ink-3">SCENARIO</span>
@@ -117,12 +117,13 @@ export default function PlayPage() {
           <Panel title="HOW TO READ THE MAP" className="text-[12px]">
             <ul className="px-3 pb-3 space-y-1.5 text-ink-2">
               <li className="grid grid-cols-3 gap-1">
-                <span className="flex items-center gap-1.5"><span className="w-6 h-2.5 chunk-sm bg-ok" />OK</span>
+                <span className="flex items-center gap-1.5"><span className="w-6 h-2.5 chunk-sm" style={{ background: 'var(--color-wire-ok)' }} />OK</span>
                 <span className="flex items-center gap-1.5"><span className="w-6 h-2.5 chunk-sm bg-warn" />busy</span>
                 <span className="flex items-center gap-1.5"><span className="w-6 h-2.5 chunk-sm bg-crit" />overload</span>
               </li>
               <li>Moving dots = power flowing (faster = more MW).</li>
-              <li>Ground ring = voltage at that spot. <span className="text-crit font-bold">!</span> = over the limit.</li>
+              <li>Coloured pad under a building = voltage there. <span className="text-crit font-bold">!</span> = over the limit.</li>
+              <li>Trees, clouds and sky are decoration; the wind turbine is held at 0 MW.</li>
               <li>Yellow squares = switches (hollow = open).</li>
             </ul>
           </Panel>
@@ -146,7 +147,7 @@ export default function PlayPage() {
           </div>
           <div className="flex-1 min-h-0 relative">
             {net.data && c && cfg && run.data ? (
-              <IsoBoard network={net.data} step={step} c={c} switchStates={payload?.switch_states}
+              <IsoScene network={net.data} step={step} c={c} switchStates={payload?.switch_states}
                 consumerBus={cfg.target_bus} consumerKind={KIND[cfg.consumer_profile] ?? 'tower'}
                 batteryBus={cfg.battery.enabled ? cfg.battery.bus : null} pvBuses={pvBuses}
                 pvShare={run.data.scenario.installed_pv_mw > 0 && step ? step.pv_avail_mw / run.data.scenario.installed_pv_mw : 0}
