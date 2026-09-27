@@ -150,6 +150,7 @@ class StepRecord:
     violations: list[dict]
     notes: list[str]
     levers_used: list[str]
+    health: int = 5  # 0..5 grid-health score for this step (see step_health)
 
 
 @dataclass
@@ -170,6 +171,24 @@ class QSTSResult:
             if r.status != "SAFE":
                 return r
         return None
+
+
+HEALTH_LABELS = {5: "HEALTHY", 4: "STRAINED", 3: "WARNING", 2: "DANGER", 1: "CRITICAL", 0: "FAILED"}
+
+
+def step_health(converged: bool, hard: list[StepViolation], max_v: float | None, min_v: float | None,
+                max_line: float | None, max_trafo: float | None, c: Constraints) -> int:
+    """Grid-health score from the constraint results (documented in docs/simulation.md §8):
+    0 non-convergence or islanded bus; 1/2/3 worst hard violation is HIGH/MEDIUM/LOW severity;
+    4 no violation but within 0.01 pu of a voltage limit or above 80 % of a thermal limit; 5 comfortable margins."""
+    if not converged or any(v.type in ("NON_CONVERGENCE", "ISLANDED_BUS") for v in hard):
+        return 0
+    if hard:
+        return min({"HIGH": 1, "MEDIUM": 2, "LOW": 3}.get(v.severity, 1) for v in hard)
+    near = ((max_v is not None and max_v > c.v_max - 0.01) or (min_v is not None and min_v < c.v_min + 0.01)
+            or (max_line is not None and max_line > 0.8 * c.line_loading_max)
+            or (max_trafo is not None and max_trafo > 0.8 * c.trafo_loading_max))
+    return 4 if near else 5
 
 
 def _nanround(x: float, nd: int) -> float | None:
@@ -239,7 +258,14 @@ def run_qsts(inp: ScenarioInputs, levers: list[Lever] | None = None, soc_init: f
             battery_p_mw=round(ctrl.battery_p_mw, 5),
             soc_pct=None if soc_after is None else round(100.0 * soc_after, 3),
             violations=[v.__dict__ for v in vs], notes=list(ctrl.notes), levers_used=list(ctrl.lever_log),
+            health=step_health(pf.converged, hard, float(np.nanmax(vm_mv)) if pf.converged else None,
+                               float(np.nanmin(vm_mv)) if pf.converged else None,
+                               float(pf.line_loading.max()) if pf.converged else None,
+                               float(pf.trafo_loading.max()) if pf.converged else None, c),
         ))
         soc = soc_after
-    return QSTSResult(records=records, summary=summarize(inp.labels, per_step), switch_states=current_states(net),
+    summary = summarize(inp.labels, per_step)
+    summary["health"] = min((r.health for r in records), default=5)
+    summary["health_label"] = HEALTH_LABELS[summary["health"]]
+    return QSTSResult(records=records, summary=summary, switch_states=current_states(net),
                       per_step_violations=per_step, n_powerflows=total_pf, head_line_pos=meta.head_line_pos)

@@ -3,6 +3,7 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import { ScenarioProvider } from './app/ScenarioContext'
 import { Shell } from './components/Shell'
 import BuilderPage from './pages/BuilderPage'
+import PlayPage from './pages/PlayPage'
 import GridPage from './pages/GridPage'
 import ActionsPage from './pages/ActionsPage'
 import LabPage from './pages/LabPage'
@@ -19,7 +20,8 @@ export default function App() {
         <BrowserRouter>
           <Routes>
             <Route element={<Shell />}>
-              <Route index element={<BuilderPage />} />
+              <Route index element={<PlayPage />} />
+              <Route path="builder" element={<BuilderPage />} />
               <Route path="grid" element={<GridPage />} />
               <Route path="lab" element={<LabPage />} />
               <Route path="actions" element={<ActionsPage />} />

@@ -195,7 +195,7 @@ function PredictivePanel() {
         </select>
         <span className="text-ink-3">demand error</span>
         <input type="number" aria-label="Demand error" className="w-16 num" min={-50} max={50} value={demErr} onChange={(e) => setDemErr(Number(e.target.value))} /><span className="text-ink-3">%</span>
-        <button onClick={run} disabled={m.isPending} className="inline-flex items-center gap-2 px-3 h-7 bg-accent text-bg font-medium disabled:opacity-40"><Play size={13} /> RUN PREDICTIVE</button>
+        <button onClick={run} disabled={m.isPending} className="inline-flex items-center gap-2 px-3 h-7 btn bg-accent text-ink0 disabled:opacity-40"><Play size={13} /> RUN PREDICTIVE</button>
         {m.isPending && <Spinner label="forecasting, planning, replaying…" />}
       </div>
       {sel && source !== 'current' && <p className="px-3 py-2 text-[12px] text-ink-2 border-b border-line">{sel.description}</p>}

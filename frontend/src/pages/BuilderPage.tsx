@@ -161,11 +161,11 @@ export default function BuilderPage() {
         </div>
         <div className="flex lg:flex-col gap-2 p-3 border-l border-line justify-center">
           <button disabled={!s} onClick={() => summary.refetch()}
-            className="inline-flex items-center gap-2 px-3 h-8 border border-line-strong text-ink-2 hover:text-ink disabled:opacity-40">
+            className="inline-flex items-center gap-2 btn px-3 h-9 bg-surface-2 text-ink disabled:opacity-40">
             <Zap size={14} /> BUILD SCENARIO
           </button>
           <button disabled={!s || run.isPending} onClick={() => run.mutate(config)}
-            className="inline-flex items-center gap-2 px-3 h-8 bg-accent text-bg font-medium disabled:opacity-40">
+            className="btn inline-flex items-center gap-2 px-3 h-9 bg-accent text-ink0 disabled:opacity-40">
             <Play size={14} /> {run.isPending ? 'RUNNING…' : 'RUN DIGITAL TWIN'}
           </button>
           {run.error ? <ErrorBox error={run.error} /> : null}

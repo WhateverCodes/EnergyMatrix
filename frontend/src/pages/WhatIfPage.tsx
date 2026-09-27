@@ -36,7 +36,7 @@ export default function WhatIfPage() {
   const [rephrase, setRephrase] = useState(false)
   const parseM = useMutation({ mutationFn: () => api.whatifParse(text, useLlm), onSuccess: (r) => setEdits(r.edits) })
   const runM = useMutation({ mutationFn: () => api.whatifRun(config!, edits ?? [], rephrase) })
-  if (!config) return <div className="p-6 text-ink-2">No scenario. <button className="text-accent underline" onClick={() => nav('/')}>Open the Scenario Builder</button>.</div>
+  if (!config) return <div className="p-6 text-ink-2">No scenario. <button className="text-accent underline" onClick={() => nav('/builder')}>Open the Scenario Builder</button>.</div>
   const p = parseM.data
   const r = runM.data
   const m = r?.baseline.metrics
@@ -77,7 +77,7 @@ export default function WhatIfPage() {
           {p?.unparsed.length ? <p className="px-3 pb-2 text-[12px] text-warn">Not understood (ignored): {p.unparsed.map((u) => `“${u}”`).join(', ')}</p> : null}
           {p?.notes.map((n) => <p key={n} className="px-3 pb-2 text-[11px] text-ink-3">{n}</p>)}
           <div className="flex items-center gap-3 px-3 pb-3">
-            <button onClick={() => runM.mutate()} disabled={!edits.length || runM.isPending} className="inline-flex items-center gap-2 px-3 h-8 bg-accent text-bg font-medium disabled:opacity-40"><Play size={14} /> RUN TWIN</button>
+            <button onClick={() => runM.mutate()} disabled={!edits.length || runM.isPending} className="btn inline-flex items-center gap-2 px-3 h-9 bg-accent text-ink0 disabled:opacity-40"><Play size={14} /> RUN TWIN</button>
             <label className="text-[12px] text-ink-2 inline-flex items-center gap-1"><input type="checkbox" checked={rephrase} onChange={(e) => setRephrase(e.target.checked)} /> LLM plain-language rephrase (numbers verified)</label>
             {runM.isPending && <Spinner label="simulating baseline and every corrective action…" />}
           </div>

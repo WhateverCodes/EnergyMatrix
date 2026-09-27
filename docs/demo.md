@@ -2,9 +2,17 @@
 
 `make dev` (or `make dev PORT=8010`), open http://localhost:5173. Run `make demo-check` beforehand: it executes these same steps through the API and prints PASS/FAIL.
 
-## Click-by-click (≈ 6 minutes)
+## Fast demo on PLAY (≈ 2 minutes, best for projection)
 
-1. **Scenario Builder** opens on **S1 — Normal solar + Residential Society**. Point at the header strip: REAL DATA · Kaggle Plant 1 (scaled) | SYNTHETIC CONSUMER SCENARIO | BENCHMARK FEEDER · CIGRE MV | SIMULATED RESULTS.
+1. Open http://localhost:5173. NORMAL DAY loads: green wires, health bar HEALTHY 5/5, the operator log says "grid HEALTHY". Press ▶ to animate the day.
+2. **SOLAR SURGE**: lines 1-2/2-3 turn red with "112%" tags, the health bar drops to DANGER, and the log lists the overloads.
+3. **USE BATTERY** → *GRID STABILIZED*. Toggle BEFORE / AFTER to compare. Point out that INVERTER VOLTS is tagged NOT ENOUGH (reactive power can't fix a thermal overload).
+4. **EXTREME SUN** → **AUTO-FIX** → red *NO FEASIBLE SOLUTION*: 35.9 % curtailment would be needed vs the 20 % cap.
+5. Switch to **ENGINEER VIEW** for the full tables, forecasts and What-If.
+
+## Click-by-click in ENGINEER VIEW (≈ 6 minutes)
+
+1. **Engineer view → Scenario Builder** opens on **S1 — Normal solar + Residential Society**. Point at the header strip: REAL DATA · Kaggle Plant 1 (scaled) | SYNTHETIC CONSUMER SCENARIO | BENCHMARK FEEDER · CIGRE MV | SIMULATED RESULTS.
 2. Generation column: Solar, dataset **REAL · Kaggle Solar Plant 1**, date 2020-05-25, window **10:00–15:00**, rooftop PV 20× (summary bar: installed 4.20 MW).
 3. Consumption: the **Residential Society** tile at bus 11. Network: CIGRE MV, battery 2 MW / 4 MWh at bus 11.
 4. **RUN DIGITAL TWIN** → Grid Twin. Show the single-line diagram (green buses = within limits, line thickness = loading, arrows = power-flow direction), scrub time, click Line 1-2 in the inspector. Charts: PV vs feeder demand, voltage profile, loading, SOC. Status SAFE; INFO shows reverse flow at the feeder head, which is not a violation.

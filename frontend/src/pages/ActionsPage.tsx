@@ -40,14 +40,14 @@ export default function ActionsPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dw])
 
-  if (!config) return <div className="p-6 text-ink-2">No scenario. <button className="text-accent underline" onClick={() => nav('/')}>Open the Scenario Builder</button>.</div>
+  if (!config) return <div className="p-6 text-ink-2">No scenario. <button className="text-accent underline" onClick={() => nav('/builder')}>Open the Scenario Builder</button>.</div>
   const pvBuses = [...new Set((network.data?.sgens ?? []).filter((g) => g.type === 'PV').map((g) => g.bus))]
 
   return (
     <div>
       <div className="flex flex-wrap items-center gap-3 px-3 py-2 border-b border-line bg-surface">
         <button onClick={() => evalM.mutate(weights ?? undefined)} disabled={evalM.isPending}
-          className="inline-flex items-center gap-2 px-3 h-8 bg-accent text-bg font-medium disabled:opacity-40">
+          className="btn inline-flex items-center gap-2 px-3 h-9 bg-accent text-ink0 disabled:opacity-40">
           <Search size={14} /> FIND CORRECTIVE ACTIONS
         </button>
         {evalM.isPending && <Spinner label="simulating every candidate over every step…" />}
@@ -95,7 +95,7 @@ export default function ActionsPage() {
       {evaluation && (
         <div className="flex flex-wrap items-center gap-2 px-3 py-3 border-t border-line">
           <input type="text" aria-label="Scenario name" placeholder={config.name} value={name} onChange={(e) => setName(e.target.value)} className="w-64" />
-          <button onClick={() => saveM.mutate()} disabled={saveM.isPending} className="inline-flex items-center gap-2 px-3 h-8 border border-line-strong text-ink-2 hover:text-ink">
+          <button onClick={() => saveM.mutate()} disabled={saveM.isPending} className="inline-flex items-center gap-2 btn px-3 h-9 bg-surface-2 text-ink">
             <Save size={14} /> SAVE SCENARIO
           </button>
           {saveM.data && <span className="text-ok text-[12px]">Saved #{saveM.data.id} · {saveM.data.feasibility.replace(/_/g, ' ')}</span>}

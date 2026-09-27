@@ -1,11 +1,11 @@
-import { NavLink, Outlet } from 'react-router-dom'
-import { Activity } from 'lucide-react'
+import { NavLink, Outlet, useLocation } from 'react-router-dom'
+import { Zap } from 'lucide-react'
 import { useQuery } from '@tanstack/react-query'
 import { api } from '../services/api'
 import { useScenario } from '../app/ScenarioContext'
 
-const NAV = [
-  ['/', 'Scenario Builder'],
+const ENGINEER = [
+  ['/builder', 'Scenario Builder'],
   ['/grid', 'Grid Twin'],
   ['/lab', 'Live Lab'],
   ['/actions', 'Heal & Verify'],
@@ -22,40 +22,52 @@ export function HonestyStrip() {
   const meta = ds.data?.find((d) => d.id === dsId)
   const gen = run?.honesty.generation ?? (meta ? (meta.is_real ? `REAL DATA · ${meta.name} (scaled)` : `SYNTHETIC · ${meta.name}`) : '…')
   const isReal = run?.honesty.generation_is_real ?? meta?.is_real
-  const chip = (text: string, cls: string, title: string) => (
-    <span title={title} className={`px-2 h-5 inline-flex items-center border text-[10px] tracking-[0.08em] uppercase ${cls}`}>{text}</span>
+  const chip = (text: string, bg: string, title: string) => (
+    <span title={title} className="pixel chunk-sm px-1.5 h-7 inline-flex items-center text-[9px] text-ink0 whitespace-nowrap" style={{ background: bg, boxShadow: '2px 2px 0 #0F0E17' }}>{text}</span>
   )
   return (
     <div className="flex flex-wrap gap-1.5" aria-label="Data honesty labels">
-      {chip(gen, isReal ? 'border-accent/60 text-accent' : 'border-warn/60 text-warn',
-        isReal ? 'Real plant generation shape (Kaggle, India) — scaled to feeder PV capacity' : 'Synthetic generation profile — not measured data')}
-      {chip('SYNTHETIC CONSUMER SCENARIO', 'border-line-strong text-ink-2', 'Consumer demand profiles are deterministic synthetic schedules')}
-      {chip('BENCHMARK FEEDER · CIGRE MV', 'border-line-strong text-ink-2', 'CIGRE TF C6.04.02 MV benchmark — representative, not a real Indian feeder')}
-      {chip('SIMULATED RESULTS', 'border-line-strong text-ink-2', 'All electrical values come from AC power-flow simulation')}
+      {chip(gen, isReal ? '#6EE7A8' : '#FFC857', isReal ? 'Real plant generation shape (Kaggle, India) — scaled to feeder PV capacity' : 'Synthetic generation profile — not measured data')}
+      {chip('SYNTHETIC CONSUMERS', '#E8A87C', 'Consumer demand profiles are deterministic synthetic schedules')}
+      {chip('BENCHMARK FEEDER · CIGRE MV', '#9D8CD6', 'CIGRE TF C6.04.02 MV benchmark — representative, not a real Indian feeder')}
+      {chip('SIMULATED RESULTS', '#CFC8DE', 'All electrical values come from AC power-flow simulation')}
     </div>
   )
 }
 
 export function Shell() {
+  const loc = useLocation()
+  const engineer = loc.pathname !== '/'
+  const tab = (to: string, label: string, active: boolean) => (
+    <NavLink to={to} className={`btn px-4 h-9 inline-flex items-center text-[14px] ${active ? 'bg-accent text-ink0' : 'bg-surface text-ink-2'}`}>{label}</NavLink>
+  )
   return (
     <div className="min-h-full flex flex-col">
-      <header className="border-b border-line bg-surface">
-        <div className="flex items-center gap-4 px-4 h-11">
+      <header className="bg-surface border-b-3 border-ink0">
+        <div className="flex flex-wrap items-center gap-3 px-3 py-2.5">
           <div className="flex items-center gap-2 shrink-0">
-            <Activity size={16} className="text-accent" />
-            <span className="font-semibold tracking-wide">GRIDTWIN</span>
-            <span className="text-ink-3 text-[11px] hidden lg:inline">Build → Forecast → Stress → Detect → Heal → Verify</span>
+            <span className="chunk-sm bg-accent w-9 h-9 flex items-center justify-center"><Zap size={20} className="text-ink0" /></span>
+            <div>
+              <div className="text-[20px] leading-5 font-bold tracking-wider">GRIDTWIN</div>
+              <div className="pixel text-[8px] text-ink-3">BUILD·FORECAST·STRESS·DETECT·HEAL·VERIFY</div>
+            </div>
+          </div>
+          <div className="flex gap-2">
+            {tab('/', 'PLAY', !engineer)}
+            {tab(engineer ? loc.pathname : '/builder', 'ENGINEER VIEW', engineer)}
           </div>
           <div className="ml-auto"><HonestyStrip /></div>
         </div>
-        <nav className="flex gap-0 px-2 border-t border-line overflow-x-auto">
-          {NAV.map(([to, label]) => (
-            <NavLink key={to} to={to} end={to === '/'}
-              className={({ isActive }) => `px-3 h-8 inline-flex items-center text-[12px] border-b-2 whitespace-nowrap ${isActive ? 'border-accent text-ink' : 'border-transparent text-ink-3 hover:text-ink-2'}`}>
-              {label}
-            </NavLink>
-          ))}
-        </nav>
+        {engineer && (
+          <nav className="flex gap-1 px-3 pb-2 overflow-x-auto">
+            {ENGINEER.map(([to, label]) => (
+              <NavLink key={to} to={to}
+                className={({ isActive }) => `px-3 h-8 inline-flex items-center text-[13px] rounded border-2 whitespace-nowrap ${isActive ? 'border-ink0 bg-surface-2 text-accent' : 'border-transparent text-ink-3 hover:text-ink'}`}>
+                {label}
+              </NavLink>
+            ))}
+          </nav>
+        )}
       </header>
       <main className="flex-1 min-h-0"><Outlet /></main>
     </div>

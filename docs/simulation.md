@@ -100,3 +100,8 @@ by repeatedly linearising with the Jacobian, J·[Δθ, Δ|V|] = [ΔP, ΔQ], unti
 **Thermal limits:** line loading % = I / I_max (0.145 kA ≈ 5.0 MVA at 20 kV for the overhead lines). Transformer loading % = S / S_rated (25 MVA).
 
 **Balanced power flow:** CIGRE MV is specified as a balanced three-phase benchmark, so a positive-sequence power flow represents it faithfully. It would not represent an unbalanced LV feeder with single-phase rooftop PV (see the limitations in the README).
+
+## 8. Grid-health score (Play view)
+
+A 0–5 score per step, computed in the backend from the constraint results. Window health = the worst step.
+5 HEALTHY: comfortable margins · 4 STRAINED: within 0.01 pu of a voltage limit or above 80 % of a thermal limit · 3 WARNING: LOW-severity violation · 2 DANGER: MEDIUM · 1 CRITICAL: HIGH · 0 FAILED: non-convergence or islanded bus.

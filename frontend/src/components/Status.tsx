@@ -22,7 +22,7 @@ const STYLES: Record<string, { cls: string; icon: ReactNode; label?: string }> =
 export function StatusBadge({ status, label }: { status: string; label?: string }) {
   const s = STYLES[status] ?? { cls: 'text-ink-2 border-line-strong', icon: <Info size={13} /> }
   return (
-    <span className={`inline-flex items-center gap-1 border px-1.5 py-0.5 text-[11px] font-medium tracking-wide rounded-sm ${s.cls}`}>
+    <span className={`inline-flex items-center gap-1 border-2 px-1.5 py-0.5 text-[11px] font-semibold tracking-wide rounded ${s.cls}`}>
       {s.icon}
       {label ?? s.label ?? status.replace(/_/g, ' ')}
     </span>
@@ -63,9 +63,9 @@ export function Kpi({ label, value, sub, tone }: { label: string; value: string;
 
 export function Section({ title, right, children, className = '' }: { title: string; right?: ReactNode; children: ReactNode; className?: string }) {
   return (
-    <section className={`border-b border-line ${className}`}>
-      <header className="flex items-center justify-between px-3 h-8 border-b border-line bg-surface">
-        <h2 className="text-[11px] uppercase tracking-[0.12em] text-ink-2 font-medium">{title}</h2>
+    <section className={`chunk m-2 overflow-hidden ${className}`}>
+      <header className="flex items-center justify-between px-3 h-9 border-b-3 border-ink0 bg-surface-2">
+        <h2 className="pixel text-[11px] text-accent">{title}</h2>
         {right}
       </header>
       <div>{children}</div>

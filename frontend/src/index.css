@@ -1,31 +1,39 @@
 @import "tailwindcss";
-@import "@fontsource/ibm-plex-sans/400.css";
-@import "@fontsource/ibm-plex-sans/500.css";
-@import "@fontsource/ibm-plex-sans/600.css";
+@import "@fontsource/chakra-petch/400.css";
+@import "@fontsource/chakra-petch/500.css";
+@import "@fontsource/chakra-petch/600.css";
+@import "@fontsource/chakra-petch/700.css";
+@import "@fontsource/silkscreen/400.css";
 @import "@fontsource/jetbrains-mono/400.css";
-@import "@fontsource/jetbrains-mono/500.css";
+@import "@fontsource/jetbrains-mono/600.css";
 
-/* Dark control-room tokens. One cyan accent for UI chrome; data series + status colours
-   are validated (dataviz validator, dark mode, surface #11161c). */
+/* "Playable city-builder" style: chunky flat panels, 3px near-black outlines, hard offset shadows,
+   no gradients, no glow. Status is never colour-only (icons + labels everywhere). Chart series colours
+   keep the palette validated earlier with the dataviz validator. */
 @theme {
-  --font-sans: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Chakra Petch", ui-sans-serif, system-ui, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, monospace;
+  --font-pixel: "Silkscreen", ui-monospace, monospace;
 
-  --color-bg: #0b0f14;
-  --color-surface: #11161c;
-  --color-surface-2: #161d25;
-  --color-line: #232c36;
-  --color-line-strong: #33404d;
-  --color-ink: #e6edf3;
-  --color-ink-2: #a7b3bf;
-  --color-ink-3: #6b7885;
-  --color-accent: #22c3dd;
-  --color-accent-dim: #11495a;
+  --color-ink0: #0f0e17;          /* outlines, text on light fills */
+  --color-bg: #2a2540;            /* page */
+  --color-surface: #1c1a28;       /* panels */
+  --color-surface-2: #262338;     /* inputs, inner panels */
+  --color-line: #0f0e17;
+  --color-line-strong: #3a3552;
+  --color-ink: #f6f1e7;
+  --color-ink-2: #cfc8de;
+  --color-ink-3: #948cab;
+  --color-accent: #ffc857;        /* sun / energy */
+  --color-accent-dim: #5a4a24;
 
-  --color-ok: #0ca30c;
-  --color-warn: #fab219;
-  --color-serious: #ec835a;
-  --color-crit: #d03b3b;
+  --color-ok: #6ee7a8;            /* healthy */
+  --color-warn: #ffc857;
+  --color-serious: #ff9f5a;
+  --color-crit: #ff5d5d;          /* violation */
+  --color-tower: #9d8cd6;
+  --color-roof: #e8a87c;
+  --color-batt: #7fd1e8;
 
   --color-s-solar: #c98500;
   --color-s-demand: #3987e5;
@@ -38,16 +46,42 @@ body {
   background: var(--color-bg);
   color: var(--color-ink);
   font-family: var(--font-sans);
-  font-size: 13px;
+  font-size: 14px;
   -webkit-font-smoothing: antialiased;
 }
 .num { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+.pixel { font-family: var(--font-pixel); letter-spacing: 0.02em; }
+
+/* chunky panel: 3px outline + hard offset shadow */
+.chunk { background: var(--color-surface); border: 3px solid var(--color-ink0); box-shadow: 5px 5px 0 var(--color-ink0); border-radius: 6px; }
+.chunk-sm { border: 3px solid var(--color-ink0); box-shadow: 3px 3px 0 var(--color-ink0); border-radius: 5px; }
+.btn {
+  border: 3px solid var(--color-ink0); box-shadow: 4px 4px 0 var(--color-ink0); border-radius: 6px;
+  transition: transform 60ms ease, box-shadow 60ms ease; font-weight: 700; letter-spacing: 0.04em;
+}
+.btn:hover:not(:disabled) { transform: translate(-1px, -1px); box-shadow: 5px 5px 0 var(--color-ink0); }
+.btn:active:not(:disabled) { transform: translate(3px, 3px); box-shadow: 1px 1px 0 var(--color-ink0); }
+.btn:disabled { opacity: 0.45; cursor: not-allowed; }
+
 input[type="range"] { accent-color: var(--color-accent); }
 select, input[type="number"], input[type="text"], textarea {
   background: var(--color-surface-2);
-  border: 1px solid var(--color-line-strong);
+  border: 2px solid var(--color-ink0);
   color: var(--color-ink);
-  border-radius: 3px;
+  border-radius: 4px;
   padding: 3px 6px;
 }
-select:focus, input:focus, textarea:focus, button:focus-visible { outline: 1px solid var(--color-accent); outline-offset: 1px; }
+select:focus, input:focus, textarea:focus, button:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; }
+
+/* power-flow particles: dashes marching along the wire in the flow direction */
+@keyframes flow { to { stroke-dashoffset: -32; } }
+.flow { animation: flow linear infinite; }
+@keyframes blink { 50% { opacity: 0.35; } }
+.blink { animation: blink 1.1s steps(2, jump-none) infinite; }
+@keyframes pop { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+.pop { animation: pop 160ms ease-out; transform-origin: center; }
+
+@media (prefers-reduced-motion: reduce) {
+  .flow, .blink, .pop { animation: none !important; }
+  .btn { transition: none; }
+}

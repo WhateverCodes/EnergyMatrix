@@ -45,7 +45,7 @@ export interface StepRecord {
   losses_mw: number | null; ext_grid_p: number | null; load_mw: number; feeder_load_mw: number
   pv_avail_mw: number; pv_dispatched_mw: number; curtailed_mw: number; curtail_pct: number
   required_curtail_pct: number | null; pv_q_mvar: number; battery_p_mw: number; soc_pct: number | null
-  violations: Violation[]; notes: string[]; levers_used: string[]
+  violations: Violation[]; notes: string[]; levers_used: string[]; health: number
 }
 export interface Metrics {
   max_v: number | null; min_v: number | null; max_line_pct: number | null; max_trafo_pct: number | null
@@ -56,7 +56,7 @@ export interface Metrics {
   peak_reverse_flow_mw: number; peak_feeder_reverse_flow_mw: number; n_steps: number; n_violation_steps: number
   n_nonconverged_steps: number
 }
-export interface Summary { status: string; worst_step: string | null; violations: Violation[]; info: Violation[] }
+export interface Summary { status: string; worst_step: string | null; violations: Violation[]; info: Violation[]; health: number; health_label: string }
 export interface QstsPayload { status: string; summary: Summary; metrics: Metrics; switch_states: Record<string, boolean>; steps: StepRecord[] }
 
 export interface ScenarioSummary {

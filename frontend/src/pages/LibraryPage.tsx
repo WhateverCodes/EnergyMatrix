@@ -53,7 +53,7 @@ function Datasets() {
           <select aria-label="unit" value={f.unit} onChange={(e) => setF({ ...f, unit: e.target.value })}><option>W</option><option>kW</option><option>MW</option></select></label>
         <label className="flex flex-col gap-1"><span className="text-ink-3">type</span>
           <select aria-label="source type" value={f.source_type} onChange={(e) => setF({ ...f, source_type: e.target.value })}><option>solar</option><option>load</option></select></label>
-        <button disabled={!file || up.isPending} onClick={() => up.mutate()} className="inline-flex items-center gap-2 px-3 h-8 border border-line-strong text-ink-2 hover:text-ink disabled:opacity-40"><Upload size={14} /> UPLOAD & VALIDATE</button>
+        <button disabled={!file || up.isPending} onClick={() => up.mutate()} className="inline-flex items-center gap-2 btn px-3 h-9 bg-surface-2 text-ink disabled:opacity-40"><Upload size={14} /> UPLOAD & VALIDATE</button>
       </div>
       {up.error ? <div className="px-3 pb-3"><ErrorBox error={up.error} /></div> : null}
       {rep && (

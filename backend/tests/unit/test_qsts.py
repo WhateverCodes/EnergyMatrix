@@ -101,3 +101,11 @@ def test_qsts_does_not_mutate_template():
     run_qsts(build_inputs(cfg(rooftop_cluster_mw=5.0)))
     assert get_template().sgen["p_mw"].equals(before)
     assert len(get_template().sgen) == 9
+
+
+def test_grid_health_score_from_constraints():
+    safe = run_qsts(build_inputs(cfg()))
+    assert all(r.health >= 4 for r in safe.records) and safe.summary["health"] >= 4
+    hot = run_qsts(build_inputs(cfg(pv_multiplier=60, battery=BatteryConfig(enabled=False))))
+    assert hot.summary["health"] <= 2 and hot.summary["health_label"] in ("DANGER", "CRITICAL")
+    assert all((r.health <= 3) == (r.status != "SAFE") for r in hot.records)

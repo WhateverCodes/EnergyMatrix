@@ -129,7 +129,9 @@ Errors always have the shape `{"error_code","message","details"}`, and stack tra
 
 ## Pages
 
-Scenario Builder · Grid Twin (single-line diagram, time scrubber, inspector, charts) · Live Lab (debounced sliders, ~40–100 ms per power-flow snapshot) · Heal & Verify (all candidates, weights, apply → before/after, infeasible panel, save) · Forecast & Predict · What-If (natural language → editable parameter chips) · Library (datasets, upload, saved scenarios and comparison, hosting-capacity map).
+**PLAY (landing page):** an isometric city-builder view of the feeder. Buildings sit at the real buses and wires follow the real topology. Wire and ground colours come from the simulated loading and voltage, and particles move in the simulated power-flow direction (faster = more MW). It has NORMAL / SURGE / EXTREME scenario buttons, a 5-segment grid-health bar (score computed in the backend), an operator log, and four action buttons plus AUTO-FIX. Each button re-simulates the whole window and shows a GRID STABILIZED / NOT ENOUGH / NO FEASIBLE SOLUTION banner with the backend's reason. Motion respects `prefers-reduced-motion`.
+
+**ENGINEER VIEW:** Scenario Builder · Grid Twin (single-line diagram, time scrubber, inspector, charts) · Live Lab (debounced sliders, ~40–100 ms per power-flow snapshot) · Heal & Verify (all candidates, weights, apply → before/after, infeasible panel, save) · Forecast & Predict · What-If (natural language → editable parameter chips) · Library (datasets, upload, saved scenarios and comparison, hosting-capacity map).
 
 Demo script: [docs/demo.md](docs/demo.md). Q&A: [docs/judge_qa.md](docs/judge_qa.md), [docs/viva_qa.md](docs/viva_qa.md).
 

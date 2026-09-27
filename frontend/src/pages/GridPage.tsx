@@ -44,7 +44,7 @@ export default function GridPage() {
   }, [playing, run])
 
   if (!run || !config) {
-    return <div className="p-6 text-ink-2">No simulation yet. <button className="text-accent underline" onClick={() => nav('/')}>Build and run a scenario</button> first.</div>
+    return <div className="p-6 text-ink-2">No simulation yet. <button className="text-accent underline" onClick={() => nav('/builder')}>Build and run a scenario</button> first.</div>
   }
   const step = run.steps[k]
   const c = config.constraints

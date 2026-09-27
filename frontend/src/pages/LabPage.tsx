@@ -33,7 +33,7 @@ export default function LabPage() {
   const violated = !!snap.data && snap.data.status !== 'SAFE' && !snap.isPlaceholderData
   const prev = useQuery({ queryKey: ['preview', body], queryFn: () => api.snapshot({ ...body!, include_preview: true }), enabled: !!body && violated, retry: false })
 
-  if (!config || !inp) return <div className="p-6 text-ink-2">No scenario. <button className="text-accent underline" onClick={() => nav('/')}>Open the Scenario Builder</button>.</div>
+  if (!config || !inp) return <div className="p-6 text-ink-2">No scenario. <button className="text-accent underline" onClick={() => nav('/builder')}>Open the Scenario Builder</button>.</div>
   const s = snap.data
   const c = config.constraints
   const set = (patch: Partial<LabInputs>) => setInp({ ...inp, ...patch })
@@ -77,7 +77,7 @@ export default function LabPage() {
           {slider('Curtailment cap', 'curtailment_cap_pct', 0, 100, 5, '%')}
           {slider('V max', 'v_max', 1.02, 1.1, 0.005, ' pu')}
           <div className="p-3">
-            <button onClick={fullEvaluation} className="w-full inline-flex justify-center items-center gap-2 px-3 h-8 bg-accent text-bg font-medium">
+            <button onClick={fullEvaluation} className="w-full inline-flex justify-center items-center gap-2 px-3 h-8 btn bg-accent text-ink0">
               <FlaskConical size={14} /> RUN FULL EVALUATION
             </button>
             <p className="text-[11px] text-ink-3 mt-2">Applies these inputs to the whole window and simulates every corrective action.</p>
