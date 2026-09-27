@@ -8,7 +8,18 @@
 2. **Solar surge**: lines 1-2 and 2-3 turn red with "112%" tags, health drops to *Danger*, and the log lists the overloads in plain words.
 3. **Use the battery** → *Grid stabilized*. Toggle Before / After to compare. Point out that *Inverter voltage control* is marked *Not enough* (reactive power can't fix a thermal overload).
 4. **Extreme sun** → **Auto-fix** → *No feasible solution*: 35.9 % curtailment would be needed against the 20 % cap.
-5. Switch to **Engineer view** for the full tables, forecasts and What-If.
+5. **Your own scenario on the map:** Engineer view → Scenario builder → set the values (e.g. Rooftop PV 60×, battery off) → **Open in Play**. It appears as the *Your scenario* tab with all the same actions. Good starting values:
+
+   | Story | Settings (date 2020-05-25, 10:00–15:00) |
+   |---|---|
+   | Calm day | Rooftop PV 20×, battery on, SOC 50% |
+   | Battery saves the day | Rooftop PV 44×, battery on, SOC 20% |
+   | Rerouting wins | Rooftop PV 56–60×, battery off |
+   | Nothing works | Rooftop PV 88×, battery on, SOC 90%, cap 20% |
+   | Evening shortage | Window 18:00–21:00, consumer scale 1.5, SOC 10% |
+   | One overloaded street | Rooftop PV 1×, PV cluster 7 MW at bus 6 |
+
+6. Switch to **Engineer view** for the full tables, forecasts and What-If.
 
 ## Click-by-click in ENGINEER VIEW (≈ 6 minutes)
 

@@ -12,6 +12,9 @@ interface Ctx {
   setEvaluation: (e: Evaluation | null) => void
   applied: ApplyResult | null
   setApplied: (a: ApplyResult | null) => void
+  /** Scenario sent from the Scenario builder to the Play view ("Your scenario" tab). */
+  customConfig: ScenarioConfig | null
+  setCustomConfig: (c: ScenarioConfig | null) => void
 }
 
 const ScenarioCtx = createContext<Ctx | null>(null)
@@ -22,6 +25,7 @@ export function ScenarioProvider({ children }: { children: ReactNode }) {
   const [run, setRun] = useState<RunResult | null>(null)
   const [evaluation, setEvaluation] = useState<Evaluation | null>(null)
   const [applied, setApplied] = useState<ApplyResult | null>(null)
+  const [customConfig, setCustomConfig] = useState<ScenarioConfig | null>(null)
   // Any config change invalidates downstream results: they were computed for a different scenario.
   const setConfig = (c: ScenarioConfig) => {
     setConfigState(c)
@@ -30,7 +34,7 @@ export function ScenarioProvider({ children }: { children: ReactNode }) {
     setApplied(null)
   }
   return (
-    <ScenarioCtx.Provider value={{ config, setConfig, libraryId, setLibraryId, run, setRun, evaluation, setEvaluation, applied, setApplied }}>
+    <ScenarioCtx.Provider value={{ config, setConfig, libraryId, setLibraryId, run, setRun, evaluation, setEvaluation, applied, setApplied, customConfig, setCustomConfig }}>
       {children}
     </ScenarioCtx.Provider>
   )

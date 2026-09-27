@@ -1,7 +1,8 @@
 import { useEffect, useRef } from 'react'
+import { Link } from 'react-router-dom'
 import { Loader2, Pause, Play, X } from 'lucide-react'
 import { IsoScene, type Building } from '../features/play/IsoScene'
-import { useGridSession } from '../hooks/useGridSession'
+import { CUSTOM, useGridSession } from '../hooks/useGridSession'
 import { fmt } from '../utils/format'
 
 /* PLAY view. Everything shown comes from the backend: the baseline QSTS run, the evaluation of every
@@ -27,6 +28,10 @@ const KIND: Record<string, Building> = {
 const SHORT: Record<string, string> = {
   battery: 'battery', switching: 'rerouted', reactive: 'inverter control', curtailment: 'trimmed solar',
   battery_curtail: 'battery + trim', reactive_curtail: 'inverters + trim', switching_battery: 'reroute + battery', all_levers: 'all levers',
+}
+const PROFILE_NAME: Record<string, string> = {
+  residential_society: 'residential society', neighborhood: 'neighbourhood', hospital: 'hospital', office: 'office',
+  commercial_building: 'commercial building', small_factory: 'small factory', school: 'school', bungalow: 'bungalow',
 }
 const HEALTH_LABEL = ['Failed', 'Critical', 'Danger', 'Warning', 'Strained', 'Healthy']
 const healthTone = (h: number) => (h >= 4 ? 'var(--color-ok)' : h === 3 ? 'var(--color-warn)' : 'var(--color-crit)')
@@ -83,10 +88,23 @@ function Verdict({ v }: { v: 'works' | 'short' | 'na' | null }) {
 export default function PlayPage() {
   const g = useGridSession()
   const { net, sid, setSid, cfg, run, evalQ, k, setK, playing, setPlaying, selected, setSelected, applied, view, setView,
-    banner, setBanner, busy, log, act, payload, steps, step, c, pvBuses, verdict, health } = g
+    banner, setBanner, busy, log, act, payload, steps, step, c, pvBuses, verdict, health, isCustom, customConfig } = g
   const logRef = useRef<HTMLDivElement>(null)
   useEffect(() => { logRef.current?.scrollTo({ top: 1e6 }) }, [log])
   const scen = SCENARIOS.find((s) => s.id === sid)
+  const tabs: { id: string; label: string }[] = [...SCENARIOS, ...(customConfig ? [{ id: CUSTOM, label: 'Your scenario' }] : [])]
+  // plain restatement of the settings the user chose in the builder (no computed values)
+  const customBlurb = customConfig ? (() => {
+    const d = new Date(`${customConfig.date}T00:00:00`).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })
+    const b = customConfig.battery
+    return `Built in the scenario builder: ${d}, ${customConfig.start}–${customConfig.end}, rooftop solar ${customConfig.pv_multiplier}×`
+      + (run.data && isCustom ? ` (${fmt(run.data.scenario.installed_pv_mw, 1)} MW)` : '')
+      + (customConfig.rooftop_cluster_mw > 0 ? ` plus a ${customConfig.rooftop_cluster_mw} MW solar cluster at bus ${customConfig.rooftop_cluster_bus}` : '')
+      + `, ${PROFILE_NAME[customConfig.consumer_profile] ?? customConfig.consumer_profile} ×${customConfig.consumer_scale} at bus ${customConfig.target_bus}`
+      + (customConfig.demand_scale !== 1 ? `, demand ${Math.round(customConfig.demand_scale * 100)}%` : '')
+      + (b.enabled ? `, battery starting at ${b.soc_init_pct}%` : ', no battery')
+      + (customConfig.constraints.max_curtailment_pct !== 20 ? `, solar trimming capped at ${customConfig.constraints.max_curtailment_pct}%` : '') + '.'
+  })() : ''
 
   const outcome = banner ? {
     title: banner.kind === 'busy' ? 'Simulating…' : banner.title === 'GRID STABILIZED' ? 'Grid stabilized' : banner.title === 'ALREADY HEALTHY' ? 'Already healthy'
@@ -100,14 +118,16 @@ export default function PlayPage() {
       {/* scenario selector */}
       <div className="flex flex-wrap items-center gap-5">
         <div className="inline-flex p-1 rounded-[10px] bg-surface border border-line" role="tablist" aria-label="Scenario">
-          {SCENARIOS.map((s) => (
+          {tabs.map((s) => (
             <button key={s.id} role="tab" aria-selected={sid === s.id} aria-pressed={sid === s.id} onClick={() => setSid(s.id)}
               className={`px-4 h-9 rounded-md text-[14px] ${sid === s.id ? 'bg-accent text-on-accent font-medium' : 'text-ink-2 hover:text-ink'}`}>
               {s.label}
             </button>
           ))}
         </div>
-        {scen && <p className="text-[14px] text-ink-2 max-w-[80ch]">{scen.blurb}</p>}
+        {isCustom
+          ? <p className="text-[14px] text-ink-2 max-w-[90ch]">{customBlurb} <Link to="/builder" className="text-accent-ink underline underline-offset-2">Edit in the builder</Link></p>
+          : scen && <p className="text-[14px] text-ink-2 max-w-[80ch]">{scen.blurb}</p>}
       </div>
 
       <div className="flex-1 grid grid-cols-[272px_minmax(0,1fr)_320px] gap-4 min-h-0">

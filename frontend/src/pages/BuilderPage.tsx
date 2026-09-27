@@ -1,5 +1,5 @@
 import { useMutation, useQuery } from '@tanstack/react-query'
-import { Play, Zap } from 'lucide-react'
+import { Map as MapIcon, Play, Zap } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { useScenario } from '../app/ScenarioContext'
 import { ErrorBox, Kpi, Section, Spinner, StatusBadge } from '../components/Status'
@@ -35,7 +35,7 @@ const times = Array.from({ length: 96 }, (_, i) => `${String(Math.floor(i / 4)).
 
 export default function BuilderPage() {
   const lib = useBootstrap()
-  const { config, setConfig, libraryId, setLibraryId, setRun } = useScenario()
+  const { config, setConfig, libraryId, setLibraryId, setRun, setCustomConfig } = useScenario()
   const nav = useNavigate()
   const datasets = useQuery({ queryKey: ['datasets'], queryFn: api.datasets })
   const profiles = useQuery({ queryKey: ['profiles'], queryFn: api.profiles })
@@ -167,6 +167,10 @@ export default function BuilderPage() {
           <button disabled={!s || run.isPending} onClick={() => run.mutate(config)}
             className="btn inline-flex items-center gap-2 px-3 h-9 bg-accent text-on-accent border-transparent disabled:opacity-40">
             <Play size={14} /> {run.isPending ? 'Running…' : 'Run digital twin'}
+          </button>
+          <button disabled={!s} onClick={() => { setCustomConfig({ ...config, name: 'Your scenario' }); nav('/', { state: { custom: true } }) }}
+            className="btn inline-flex items-center gap-2 px-3 h-9 bg-surface text-ink" title="Show this scenario on the illustrated town map">
+            <MapIcon size={14} /> Open in Play
           </button>
           {run.error ? <ErrorBox error={run.error} /> : null}
           {summary.isFetching && <Spinner label="building" />}

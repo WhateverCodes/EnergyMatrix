@@ -1,28 +1,39 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { useLocation } from 'react-router-dom'
 import { api } from '../services/api'
 import { useScenario } from '../app/ScenarioContext'
 import type { ApplyResult, Evaluation, LibraryScenario, QstsPayload, RunResult, ScenarioConfig } from '../types/api'
 import { fmt } from '../utils/format'
 
-/* Shared state machine for the PLAY and ATLAS views: scenario -> baseline QSTS run -> background
-   evaluation of every corrective action -> apply the chosen one (re-simulated) -> outcome + log.
-   Both views only present what the backend returned. */
+/* State machine for the PLAY view: scenario -> baseline QSTS run -> background evaluation of every
+   corrective action -> apply the chosen one (re-simulated) -> outcome + log. The scenario is either a
+   library preset (S1/S2/S6) or the user's own scenario sent from the Scenario builder ('CUSTOM').
+   Only backend results are presented. */
+
+export const CUSTOM = 'CUSTOM'
 
 export type Banner = { kind: 'ok' | 'bad' | 'na' | 'busy'; title: string; reason: string; detail?: string }
 export type LogLine = { t: string; tone: 'ok' | 'bad' | 'warn' | 'info'; text: string }
 
 export function useGridSession() {
   const qc = useQueryClient()
-  const { setConfig, setLibraryId } = useScenario()
+  const { setConfig, setLibraryId, customConfig } = useScenario()
+  const location = useLocation()
   const lib = useQuery({ queryKey: ['library'], queryFn: api.library })
   const net = useQuery({ queryKey: ['network'], queryFn: api.network })
-  const [sid, setSid] = useState<string>('S1')
+  const openCustom = !!(location.state as { custom?: boolean } | null)?.custom && !!customConfig
+  const [sid, setSid] = useState<string>(openCustom ? CUSTOM : 'S1')
+  useEffect(() => { if (openCustom) setSid(CUSTOM) }, [openCustom, customConfig])
   const sc: LibraryScenario | undefined = lib.data?.find((s) => s.id === sid)
-  const cfg = sc?.config as ScenarioConfig | undefined
-  const run = useQuery({ queryKey: ['play-run', sid], queryFn: () => api.run(cfg!), enabled: !!cfg, staleTime: Infinity })
+  const isCustom = sid === CUSTOM
+  const cfg = (isCustom ? customConfig ?? undefined : sc?.config) as ScenarioConfig | undefined
+  const title = isCustom ? 'Your scenario' : sc?.title
+  // custom runs are cached by their actual values, presets by id
+  const key = isCustom ? `custom:${JSON.stringify(customConfig)}` : sid
+  const run = useQuery({ queryKey: ['play-run', key], queryFn: () => api.run(cfg!), enabled: !!cfg, staleTime: Infinity })
   // evaluate every corrective action in the background as soon as the baseline is known
-  const evalQ = useQuery({ queryKey: ['play-eval', sid], queryFn: () => api.evaluate(cfg!), enabled: !!cfg && !!run.data, staleTime: Infinity })
+  const evalQ = useQuery({ queryKey: ['play-eval', key], queryFn: () => api.evaluate(cfg!), enabled: !!cfg && !!run.data, staleTime: Infinity })
 
   const [k, setK] = useState(0)
   const [playing, setPlaying] = useState(false)
@@ -37,14 +48,14 @@ export function useGridSession() {
   // new scenario -> reset, share config with the engineer pages, write the opening log
   useEffect(() => {
     if (!cfg) return
-    setLibraryId(sid)
+    setLibraryId(isCustom ? null : sid)
     setConfig(cfg)
     setApplied(null); setView('before'); setBanner(null); setSelected(null)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sid, cfg])
   useEffect(() => {
     const r = run.data
-    if (!r || !sc) return
+    if (!r || !title) return
     const worst = Math.max(0, r.steps.findIndex((s) => s.label === r.summary.worst_step))
     setK(r.summary.worst_step ? worst : Math.floor(r.steps.length / 2))
     const hard = r.summary.violations.filter((v) => v.hard)
@@ -57,7 +68,7 @@ export function useGridSession() {
       return `${v.type.replace(/_/g, ' ').toLowerCase()} at ${v.name}, ${dur}.`
     }
     push([
-      { t: r.steps[0].label, tone: 'info', text: `${sc.title}. ${r.scenario.installed_pv_mw.toFixed(1)} MW of rooftop solar installed.` },
+      { t: r.steps[0].label, tone: 'info', text: `${title}. ${r.scenario.installed_pv_mw.toFixed(1)} MW of rooftop solar installed.` },
       { t: r.steps[0].label, tone: hard.length ? 'bad' : 'ok', text: hard.length ? `Simulated the day in ${r.steps.length} quarter-hours: ${hard.length} limit ${hard.length === 1 ? 'breach' : 'breaches'} found.` : `Simulated the day in ${r.steps.length} quarter-hours: every limit respected.` },
       ...hard.slice(0, 4).map((v) => ({ t: v.steps?.[0] ?? '', tone: 'bad' as const, text: say(v) })),
       ...(hard.length ? [{ t: '', tone: 'warn' as const, text: 'Choose a corrective action on the right to try it.' }] : []),
@@ -82,7 +93,7 @@ export function useGridSession() {
     setBusy(key)
     setBanner({ kind: 'busy', title: 'SIMULATING…', reason: 'Re-running AC power flow over every 15-minute step with this action applied.' })
     try {
-      const ev: Evaluation = await qc.fetchQuery({ queryKey: ['play-eval', sid], queryFn: () => api.evaluate(cfg), staleTime: Infinity })
+      const ev: Evaluation = await qc.fetchQuery({ queryKey: ['play-eval', key], queryFn: () => api.evaluate(cfg), staleTime: Infinity })
       const t = step?.label ?? ''
       if (ev.status === 'NO_ACTION_NEEDED') {
         setBanner({ kind: 'ok', title: 'ALREADY HEALTHY', reason: ev.explanation })
@@ -136,7 +147,7 @@ export function useGridSession() {
   }
 
   const health = step?.health ?? payload?.summary.health ?? 5
-  return { lib, net, sid, setSid, sc, cfg, run, evalQ, k, setK, playing, setPlaying, selected, setSelected, applied, view, setView,
+  return { lib, net, sid, setSid, sc, cfg, isCustom, customConfig, run, evalQ, k, setK, playing, setPlaying, selected, setSelected, applied, view, setView,
     banner, setBanner, busy, log, act, payload, steps, step, c, pvBuses, verdict, health }
 }
 
