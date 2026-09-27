@@ -1,4 +1,5 @@
 PY := backend/.venv/bin/python
+PORT ?= 8000
 PYTHON311 := $(shell command -v python3.11 || command -v python3.12 || command -v python3.10)
 
 .PHONY: setup backend frontend dev test test-backend test-frontend calibrate demo-check
@@ -10,13 +11,13 @@ setup:
 	cd frontend && npm install
 
 backend:
-	cd backend && .venv/bin/uvicorn app.main:app --reload --port 8000
+	cd backend && .venv/bin/uvicorn app.main:app --reload --port $(PORT)
 
 frontend:
-	cd frontend && npm run dev
+	cd frontend && GRIDTWIN_API=http://localhost:$(PORT) npm run dev
 
 dev:
-	./scripts/dev.sh
+	PORT=$(PORT) ./scripts/dev.sh
 
 test: test-backend test-frontend
 

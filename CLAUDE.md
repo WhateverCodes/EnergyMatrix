@@ -38,7 +38,7 @@ Frontend: comparison table, infeasible panel only when backend says so, slider d
 - `make test`        — backend pytest + frontend vitest
 - `make backend`     — uvicorn on http://localhost:8000 (OpenAPI at /docs)
 - `make frontend`    — Vite on http://localhost:5173
-- `make dev`         — both (scripts/dev.sh)
+- `make dev`         — both (scripts/dev.sh); `make dev PORT=8010` if :8000 is taken (frontend proxy follows via GRIDTWIN_API)
 - `make calibrate`   — regenerate simulation/calibration.json
-- `make demo-check`  — scripted 22-step demo against the API
+- `make demo-check`  — scripted 22-step demo against the API (in-process, temp DB; `--url` for a live server)
 - Single backend test: `cd backend && .venv/bin/pytest tests/unit/test_x.py -q`

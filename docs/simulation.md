@@ -88,3 +88,15 @@ bus 13 (line 12-13) and 5.0 MW at bus 14 (overvoltage). On this benchmark, therm
 feeder head, not voltage, limits PV on feeder 1.
 
 Scenario parameters in `simulation/scenarios/*.json` are set relative to these thresholds.
+
+## 7. Newton-Raphson AC power flow and the per-unit system
+
+Each bus has four quantities: P, Q, |V| and θ. The slack bus (bus 0, the 110 kV external grid) fixes |V| = 1.03 pu and θ = 0 and absorbs the power mismatch. All other buses here are PQ buses (loads and PV at specified P and Q). Newton-Raphson solves the nonlinear power-balance equations
+P_i = Σ_k |V_i||V_k|(G_ik cos θ_ik + B_ik sin θ_ik), Q_i = Σ_k |V_i||V_k|(G_ik sin θ_ik − B_ik cos θ_ik)
+by repeatedly linearising with the Jacobian, J·[Δθ, Δ|V|] = [ΔP, ΔQ], until the mismatch is below 1e-8 MVA. It converges quadratically near the solution. If the power demanded cannot be delivered (past the nose of the PV curve), no solution exists, and pandapower raises `LoadflowNotConverged`. We report that as `NON_CONVERGENCE`.
+
+**Per unit:** quantities are divided by base values (S_base, and V_base per voltage level, so Z_base = V_base²/S_base). 1.05 pu at a 20 kV bus means 21.0 kV. Per unit makes voltage limits comparable across 110 kV and 20 kV and removes transformer ratios from the equations.
+
+**Thermal limits:** line loading % = I / I_max (0.145 kA ≈ 5.0 MVA at 20 kV for the overhead lines). Transformer loading % = S / S_rated (25 MVA).
+
+**Balanced power flow:** CIGRE MV is specified as a balanced three-phase benchmark, so a positive-sequence power flow represents it faithfully. It would not represent an unbalanced LV feeder with single-phase rooftop PV (see the limitations in the README).

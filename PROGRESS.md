@@ -16,7 +16,7 @@ Resume protocol: read this file and `docs/PROJECT_BRIEF.md`, continue from the f
 | 9 | Live Lab sliders + debounce | snapshot latency logged | DONE |
 | 10 | Forecast backtest + predictive + S7/S8 UI | honest metrics; S7 PLAN_FAILED_ON_ACTUALS | DONE |
 | 11 | What-If parser, history/compare, hosting view, upload UI | parser tests (10+ phrasings) | DONE |
-| 12 | Polish, demo_check.py, docs, README | `make demo-check` passes | |
+| 12 | Polish, demo_check.py, docs, README | `make demo-check` passes | DONE |
 
 ## Log
 
@@ -57,3 +57,9 @@ forecasting/ features (direct multi-horizon), models (3 baselines + HGB quantile
 
 ### Phase 11 — done
 whatif/parser_rules.py (12 edit types, 18 single phrasings + cloud + compound tests), parser_llm.py + explain/llm.py (optional, lazy, validated), API /api/whatif/parse|run. Frontend What-If Lab (editable chips, run, explanation with source tag, open in Heal & Verify) and Library (dataset cards incl. upload + validation report, saved scenarios + compare-two, hosting-capacity heat overlay on the diagram + table). Verified in headless Chrome, zero console errors.
+
+### Phase 12 — done
+scripts/demo_check.py (22 steps + S7 bonus, in-process or --url) → 23/23 PASS in ~21 s. Docs: README (real/synthetic/representative/simulated table, mermaid architecture, install, limitations, future work), docs/architecture, simulation (+ NR, per-unit, thermal), optimization, forecasting, datasets, api, demo (click-by-click + 5-min pitch), judge_qa (22 Q), viva_qa (27 Q). Makefile PORT option. Final: 90 backend + 4 frontend tests pass; production frontend build OK.
+
+## Status: ALL PHASES COMPLETE
+Known issues / limitations: see README "Limitations". Full evaluation 5–9 s (first call after startup pays ~15 s worker warm-up unless the startup warm-up thread has finished).
