@@ -65,7 +65,7 @@ export function Section({ title, right, children, className = '' }: { title: str
   return (
     <section className={`chunk m-2 overflow-hidden ${className}`}>
       <header className="flex items-center justify-between px-3 h-9 border-b-3 border-ink0 bg-surface-2">
-        <h2 className="pixel text-[11px] text-accent">{title}</h2>
+        <h2 className="pixel text-[11px] text-accent-ink">{title}</h2>
         {right}
       </header>
       <div>{children}</div>

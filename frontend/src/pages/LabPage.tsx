@@ -33,7 +33,7 @@ export default function LabPage() {
   const violated = !!snap.data && snap.data.status !== 'SAFE' && !snap.isPlaceholderData
   const prev = useQuery({ queryKey: ['preview', body], queryFn: () => api.snapshot({ ...body!, include_preview: true }), enabled: !!body && violated, retry: false })
 
-  if (!config || !inp) return <div className="p-6 text-ink-2">No scenario. <button className="text-accent underline" onClick={() => nav('/builder')}>Open the Scenario Builder</button>.</div>
+  if (!config || !inp) return <div className="p-6 text-ink-2">No scenario. <button className="text-accent-ink underline" onClick={() => nav('/builder')}>Open the Scenario Builder</button>.</div>
   const s = snap.data
   const c = config.constraints
   const set = (patch: Partial<LabInputs>) => setInp({ ...inp, ...patch })

@@ -44,7 +44,7 @@ export default function GridPage() {
   }, [playing, run])
 
   if (!run || !config) {
-    return <div className="p-6 text-ink-2">No simulation yet. <button className="text-accent underline" onClick={() => nav('/builder')}>Build and run a scenario</button> first.</div>
+    return <div className="p-6 text-ink-2">No simulation yet. <button className="text-accent-ink underline" onClick={() => nav('/builder')}>Build and run a scenario</button> first.</div>
   }
   const step = run.steps[k]
   const c = config.constraints
@@ -59,7 +59,7 @@ export default function GridPage() {
           <StatusBadge status={run.status} />
           <span className="text-ink-3 text-[12px]">{config.name} · {config.date}</span>
           <span className="ml-auto text-[11px] text-ink-3">step</span>
-          <span className="num text-accent">{step.label}</span>
+          <span className="num text-accent-ink">{step.label}</span>
           <StatusBadge status={step.status} />
         </div>
         <NetworkDiagram network={run.network} step={step} switchStates={run.switch_states} vMin={c.v_min} vMax={c.v_max}
@@ -86,7 +86,7 @@ export default function GridPage() {
         <Section title="Max loading over time"><LoadingChart steps={run.steps} lineMax={c.line_loading_max} cursor={step.label} /></Section>
         {run.battery && <Section title="Battery SOC (idle in baseline)"><SocChart steps={run.steps} cursor={step.label} /></Section>}
         <Section title={`Violations over window (${hard.length})`}
-          right={hard.length ? <button onClick={() => nav('/actions')} className="text-[11px] text-accent">Find corrective actions →</button> : null}>
+          right={hard.length ? <button onClick={() => nav('/actions')} className="text-[11px] text-accent-ink">Find corrective actions →</button> : null}>
           <ViolationList violations={hard} />
           {run.summary.info.length > 0 && (
             <p className="px-3 py-2 text-[11px] text-ink-3 border-t border-line/60">

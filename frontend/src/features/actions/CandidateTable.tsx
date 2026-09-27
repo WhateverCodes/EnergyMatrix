@@ -25,8 +25,8 @@ export function CandidateTable({ candidates, onApply, applying }: { candidates: 
                 className={`border-b border-line/60 ${c.recommended ? 'bg-accent/10 outline outline-1 outline-accent/60 -outline-offset-1' : ''} ${!c.available ? 'text-ink-3' : ''}`}>
                 <td className="px-3 py-1.5 num text-ink-3">{c.rank}</td>
                 <td className="py-1.5">
-                  <span className="inline-flex items-center gap-1">{c.recommended && <Star size={12} className="text-accent" aria-label="recommended" />}{c.name}</span>
-                  {c.recommended && <span className="ml-2 text-[10px] text-accent uppercase tracking-wider">recommended</span>}
+                  <span className="inline-flex items-center gap-1">{c.recommended && <Star size={12} className="text-accent-ink" aria-label="recommended" />}{c.name}</span>
+                  {c.recommended && <span className="ml-2 text-[10px] text-accent-ink uppercase tracking-wider">recommended</span>}
                 </td>
                 <td>
                   {!c.available ? <span className="text-ink-3">n/a — {c.unavailable_reason}</span>
@@ -46,7 +46,7 @@ export function CandidateTable({ candidates, onApply, applying }: { candidates: 
                 <td className="pr-3">
                   {onApply && c.available && c.key !== 'none' && (
                     <button onClick={() => onApply(c.key)} disabled={!!applying}
-                      className={`px-2 h-6 text-[11px] border ${c.recommended ? 'border-accent text-accent' : 'border-line-strong text-ink-2'} disabled:opacity-40`}>
+                      className={`px-2 h-6 text-[11px] border ${c.recommended ? 'border-accent text-accent-ink' : 'border-line-strong text-ink-2'} disabled:opacity-40`}>
                       {applying === c.key ? '…' : 'APPLY'}
                     </button>
                   )}

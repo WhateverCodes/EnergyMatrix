@@ -40,7 +40,7 @@ type LogLine = { t: string; tone: 'ok' | 'bad' | 'warn' | 'info'; text: string }
 function Panel({ title, children, className = '' }: { title: string; children: React.ReactNode; className?: string }) {
   return (
     <section className={`chunk overflow-hidden ${className}`}>
-      <h2 className="pixel text-[11px] text-accent px-3 pt-2 pb-1">{title}</h2>
+      <h2 className="pixel text-[11px] text-accent-ink px-3 pt-2 pb-1">{title}</h2>
       {children}
     </section>
   )
@@ -51,11 +51,11 @@ export function HealthBar({ health }: { health: number }) {
     <div aria-label={`Grid health ${health} of 5: ${HEALTH_LABEL[health]}`} role="meter" aria-valuemin={0} aria-valuemax={5} aria-valuenow={health}>
       <div className="flex gap-1.5 px-3">
         {[1, 2, 3, 4, 5].map((i) => (
-          <div key={i} className="h-7 flex-1 chunk-sm" style={{ background: i <= health ? HEALTH_COL[health] : '#2A2540' }} />
+          <div key={i} className="h-7 flex-1 chunk-sm" style={{ background: i <= health ? HEALTH_COL[health] : 'var(--color-slot)' }} />
         ))}
       </div>
       <div className="px-3 pt-2 pb-3 flex items-baseline justify-between">
-        <span className="text-2xl font-bold tracking-wide" style={{ color: HEALTH_COL[health] }}>{HEALTH_LABEL[health]}</span>
+        <span className={`text-2xl font-bold tracking-wide ${health >= 4 ? 'text-ok' : health === 3 ? 'text-warn' : 'text-crit'}`}>{HEALTH_LABEL[health]}</span>
         <span className="pixel text-[10px] text-ink-3">{health}/5</span>
       </div>
     </div>
@@ -240,9 +240,9 @@ export default function PlayPage() {
 
         {/* CENTER: board + operator log */}
         <div className="flex flex-col gap-3 min-h-0">
-        <div className="chunk relative flex flex-col flex-1 min-h-0 overflow-hidden" style={{ background: '#2E2847' }}>
+        <div className="chunk relative flex flex-col flex-1 min-h-0 overflow-hidden" style={{ background: 'var(--color-board)' }}>
           <div className="flex items-center gap-2 px-3 pt-2">
-            <span className="pixel text-[11px] text-accent">FEEDER MAP · CIGRE MV (REPRESENTATIVE)</span>
+            <span className="pixel text-[11px] text-accent-ink">FEEDER MAP · CIGRE MV (REPRESENTATIVE)</span>
             {applied && (
               <div className="ml-auto flex">
                 {(['before', 'after'] as const).map((v) => (
@@ -277,7 +277,7 @@ export default function PlayPage() {
             )}
             {selected !== null && step && net.data && (
               <div className="absolute left-3 bottom-3 chunk px-3 py-2 text-[13px] min-w-[220px]">
-                <div className="pixel text-[10px] text-accent">{net.data.buses[selected].name.toUpperCase()}</div>
+                <div className="pixel text-[10px] text-accent-ink">{net.data.buses[selected].name.toUpperCase()}</div>
                 <div className="num">{fmt(step.bus_vm[selected], 4)} pu</div>
                 <div className="text-ink-3 text-[12px]">{net.data.loads.filter((l) => l.bus === selected).map((l) => l.name).join(', ') || 'no load'}</div>
               </div>
@@ -291,7 +291,7 @@ export default function PlayPage() {
             <span className="pixel text-[10px] text-ink-3">TIME</span>
             <input aria-label="Time of day" type="range" min={0} max={Math.max(0, steps.length - 1)} value={Math.min(k, Math.max(0, steps.length - 1))}
               onChange={(e) => { setPlaying(false); setK(Number(e.target.value)) }} className="flex-1" />
-            <span className="num text-[22px] text-accent w-20 text-right">{step?.label ?? '--:--'}</span>
+            <span className="num text-[22px] text-accent-ink w-20 text-right">{step?.label ?? '--:--'}</span>
           </div>
         </div>
           <Panel title="OPERATOR LOG" className="h-[168px] shrink-0 flex flex-col">

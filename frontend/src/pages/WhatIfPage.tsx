@@ -36,7 +36,7 @@ export default function WhatIfPage() {
   const [rephrase, setRephrase] = useState(false)
   const parseM = useMutation({ mutationFn: () => api.whatifParse(text, useLlm), onSuccess: (r) => setEdits(r.edits) })
   const runM = useMutation({ mutationFn: () => api.whatifRun(config!, edits ?? [], rephrase) })
-  if (!config) return <div className="p-6 text-ink-2">No scenario. <button className="text-accent underline" onClick={() => nav('/builder')}>Open the Scenario Builder</button>.</div>
+  if (!config) return <div className="p-6 text-ink-2">No scenario. <button className="text-accent-ink underline" onClick={() => nav('/builder')}>Open the Scenario Builder</button>.</div>
   const p = parseM.data
   const r = runM.data
   const m = r?.baseline.metrics
@@ -49,7 +49,7 @@ export default function WhatIfPage() {
             {EXAMPLES.map((x) => <button key={x} onClick={() => setText(x)} className="text-[11px] px-2 h-6 border border-line-strong text-ink-3 hover:text-ink">{x}</button>)}
           </div>
           <div className="flex flex-wrap items-center gap-3">
-            <button onClick={() => parseM.mutate()} className="inline-flex items-center gap-2 px-3 h-8 border border-accent text-accent"><Sparkles size={14} /> PARSE</button>
+            <button onClick={() => parseM.mutate()} className="inline-flex items-center gap-2 px-3 h-8 border border-accent text-accent-ink"><Sparkles size={14} /> PARSE</button>
             <label className="text-[12px] text-ink-2 inline-flex items-center gap-1" title={p && !p.llm_available ? 'Set ANTHROPIC_API_KEY and install anthropic to enable' : ''}>
               <input type="checkbox" checked={useLlm} disabled={p ? !p.llm_available : false} onChange={(e) => setUseLlm(e.target.checked)} /> LLM parser{p && !p.llm_available ? ' (no API key — rule parser)' : ''}
             </label>
@@ -85,7 +85,7 @@ export default function WhatIfPage() {
         </Section>
       )}
       {r && m && (
-        <Section title="Result" right={<button onClick={() => { setLibraryId(null); setConfig(r.config); nav('/actions', { state: { autorun: true } }) }} className="text-[11px] text-accent inline-flex items-center gap-1">Open in Heal & Verify <ArrowRight size={12} /></button>}>
+        <Section title="Result" right={<button onClick={() => { setLibraryId(null); setConfig(r.config); nav('/actions', { state: { autorun: true } }) }} className="text-[11px] text-accent-ink inline-flex items-center gap-1">Open in Heal & Verify <ArrowRight size={12} /></button>}>
           <div className="flex flex-wrap items-center gap-3 px-3 py-2 border-b border-line">
             <span className="text-[11px] text-ink-3 uppercase tracking-wider">Baseline</span><StatusBadge status={r.baseline.status} />
             <span className="text-[11px] text-ink-3 uppercase tracking-wider ml-4">Corrective actions</span><StatusBadge status={r.evaluation_status} />

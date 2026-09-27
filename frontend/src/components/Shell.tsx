@@ -1,5 +1,7 @@
 import { NavLink, Outlet, useLocation } from 'react-router-dom'
-import { Zap } from 'lucide-react'
+import { Moon, Sun, Zap } from 'lucide-react'
+import { useState } from 'react'
+import { currentTheme, setTheme, type Theme } from '../app/theme'
 import { useQuery } from '@tanstack/react-query'
 import { api } from '../services/api'
 import { useScenario } from '../app/ScenarioContext'
@@ -35,6 +37,17 @@ export function HonestyStrip() {
   )
 }
 
+export function ThemeToggle() {
+  const [t, setT] = useState<Theme>(currentTheme())
+  const next: Theme = t === 'dark' ? 'light' : 'dark'
+  return (
+    <button onClick={() => { setTheme(next); setT(next) }} aria-label={`Switch to ${next} mode`} title={`Switch to ${next} mode`}
+      className="btn bg-surface text-ink h-9 px-3 inline-flex items-center gap-2 text-[13px]">
+      {t === 'dark' ? <Sun size={16} /> : <Moon size={16} />} {t === 'dark' ? 'LIGHT' : 'DARK'}
+    </button>
+  )
+}
+
 export function Shell() {
   const loc = useLocation()
   const engineer = loc.pathname !== '/'
@@ -56,13 +69,13 @@ export function Shell() {
             {tab('/', 'PLAY', !engineer)}
             {tab(engineer ? loc.pathname : '/builder', 'ENGINEER VIEW', engineer)}
           </div>
-          <div className="ml-auto"><HonestyStrip /></div>
+          <div className="ml-auto flex items-center gap-3"><HonestyStrip /><ThemeToggle /></div>
         </div>
         {engineer && (
           <nav className="flex gap-1 px-3 pb-2 overflow-x-auto">
             {ENGINEER.map(([to, label]) => (
               <NavLink key={to} to={to}
-                className={({ isActive }) => `px-3 h-8 inline-flex items-center text-[13px] rounded border-2 whitespace-nowrap ${isActive ? 'border-ink0 bg-surface-2 text-accent' : 'border-transparent text-ink-3 hover:text-ink'}`}>
+                className={({ isActive }) => `px-3 h-8 inline-flex items-center text-[13px] rounded border-2 whitespace-nowrap ${isActive ? 'border-ink0 bg-surface-2 text-accent-ink' : 'border-transparent text-ink-3 hover:text-ink'}`}>
                 {label}
               </NavLink>
             ))}

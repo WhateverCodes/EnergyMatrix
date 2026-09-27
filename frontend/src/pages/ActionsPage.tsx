@@ -40,7 +40,7 @@ export default function ActionsPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dw])
 
-  if (!config) return <div className="p-6 text-ink-2">No scenario. <button className="text-accent underline" onClick={() => nav('/builder')}>Open the Scenario Builder</button>.</div>
+  if (!config) return <div className="p-6 text-ink-2">No scenario. <button className="text-accent-ink underline" onClick={() => nav('/builder')}>Open the Scenario Builder</button>.</div>
   const pvBuses = [...new Set((network.data?.sgens ?? []).filter((g) => g.type === 'PV').map((g) => g.bus))]
 
   return (

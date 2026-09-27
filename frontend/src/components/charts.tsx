@@ -5,7 +5,7 @@ import type { StepRecord } from '../types/api'
 
 // Mark specs (dataviz): 2px lines, hairline recessive grid, legend for >= 2 series, text in ink tokens.
 const AX = { stroke: 'var(--color-line-strong)', tick: { fill: 'var(--color-ink-3)', fontSize: 10, fontFamily: 'JetBrains Mono' } }
-const GRID = <CartesianGrid stroke="var(--color-line)" strokeWidth={1} vertical={false} />
+const GRID = <CartesianGrid stroke="var(--color-line-strong)" strokeWidth={1} vertical={false} />
 const TIP = {
   contentStyle: { background: 'var(--color-surface-2)', border: '1px solid var(--color-line-strong)', borderRadius: 2, fontSize: 11 },
   labelStyle: { color: 'var(--color-ink-2)' }, itemStyle: { color: 'var(--color-ink)', fontFamily: 'JetBrains Mono', padding: 0 },
@@ -13,6 +13,8 @@ const TIP = {
 }
 // Legend text stays in ink tokens; the swatch beside it carries the series colour.
 const LEG = { wrapperStyle: { fontSize: 11 }, iconSize: 10, formatter: (v: string) => <span style={{ color: 'var(--color-ink-2)' }}>{v}</span> }
+// one tick per hour (4 x 15-min steps) so time labels never collide
+const hourly = (n: number) => (n > 8 ? 3 : 0)
 const numFmt = (nd: number) => (v: unknown) => (typeof v === 'number' ? v.toFixed(nd) : String(v))
 
 export function GenDemandChart({ steps, height = 190, cursor }: { steps: StepRecord[]; height?: number; cursor?: string }) {
@@ -21,12 +23,12 @@ export function GenDemandChart({ steps, height = 190, cursor }: { steps: StepRec
     <ResponsiveContainer width="100%" height={height}>
       <ComposedChart data={data} margin={{ top: 8, right: 16, bottom: 0, left: 0 }}>
         {GRID}
-        <XAxis dataKey="t" {...AX} interval="preserveStartEnd" />
+        <XAxis dataKey="t" {...AX} interval={hourly(data.length)} />
         <YAxis {...AX} width={44} unit="" label={{ value: 'MW', angle: -90, position: 'insideLeft', fill: 'var(--color-ink-3)', fontSize: 10 }} />
         <Tooltip {...TIP} formatter={numFmt(3)} />
         <Legend {...LEG} />
         <Area type="monotone" dataKey="avail" name="PV available" stroke="var(--color-s-solar)" fill="var(--color-s-solar)" fillOpacity={0.1} strokeWidth={2} dot={false} isAnimationActive={false} />
-        <Line type="monotone" dataKey="disp" name="PV dispatched" stroke="var(--color-s-alt)" strokeWidth={2} dot={false} isAnimationActive={false} />
+        <Line type="monotone" dataKey="disp" name="PV dispatched" stroke="var(--color-s-battery)" strokeWidth={2} dot={false} isAnimationActive={false} />
         <Line type="monotone" dataKey="load" name="Feeder demand (excl. substation aggregate)" stroke="var(--color-s-demand)" strokeWidth={2} dot={false} isAnimationActive={false} />
         {cursor && <ReferenceLine x={cursor} stroke="var(--color-accent)" strokeWidth={1} />}
       </ComposedChart>
@@ -52,8 +54,8 @@ export function VoltageProfileChart({ step, vMin, vMax, compare, height = 190 }:
         {compare !== undefined && <Legend {...LEG} />}
         <ReferenceLine y={vMax} stroke="var(--color-crit)" strokeWidth={1} label={{ value: `V max ${vMax}`, fill: 'var(--color-ink-3)', fontSize: 10, position: 'insideTopRight' }} />
         <ReferenceLine y={vMin} stroke="var(--color-crit)" strokeWidth={1} label={{ value: `V min ${vMin}`, fill: 'var(--color-ink-3)', fontSize: 10, position: 'insideBottomRight' }} />
-        {compare !== undefined && <Line dataKey="c" name="Before" stroke="var(--color-ink-3)" strokeWidth={2} dot={{ r: 3 }} isAnimationActive={false} />}
-        <Line dataKey="v" name={compare !== undefined ? 'After' : 'Voltage (pu)'} stroke="var(--color-s-demand)" strokeWidth={2} dot={{ r: 4, stroke: 'var(--color-surface)', strokeWidth: 2 }} isAnimationActive={false} />
+        {compare !== undefined && <Line dataKey="c" name="Before" stroke="var(--color-ink-3)" strokeWidth={2} dot={{ r: 4, fill: 'var(--color-ink-3)', stroke: 'var(--color-surface)', strokeWidth: 2 }} isAnimationActive={false} />}
+        <Line dataKey="v" name={compare !== undefined ? 'After' : 'Voltage (pu)'} stroke="var(--color-s-demand)" strokeWidth={2} dot={{ r: 4, fill: 'var(--color-s-demand)', stroke: 'var(--color-surface)', strokeWidth: 2 }} isAnimationActive={false} />
       </LineChart>
     </ResponsiveContainer>
   )
@@ -66,7 +68,7 @@ export function LoadingChart({ steps, lineMax, compare, height = 170, cursor }:
     <ResponsiveContainer width="100%" height={height}>
       <LineChart data={data} margin={{ top: 8, right: 16, bottom: 0, left: 0 }}>
         {GRID}
-        <XAxis dataKey="t" {...AX} interval="preserveStartEnd" />
+        <XAxis dataKey="t" {...AX} interval={hourly(data.length)} />
         <YAxis {...AX} width={44} label={{ value: '%', angle: -90, position: 'insideLeft', fill: 'var(--color-ink-3)', fontSize: 10 }} />
         <Tooltip {...TIP} formatter={numFmt(1)} />
         <Legend {...LEG} />
@@ -86,7 +88,7 @@ export function SocChart({ steps, height = 150, cursor }: { steps: StepRecord[];
     <ResponsiveContainer width="100%" height={height}>
       <LineChart data={data} margin={{ top: 8, right: 16, bottom: 0, left: 0 }}>
         {GRID}
-        <XAxis dataKey="t" {...AX} interval="preserveStartEnd" />
+        <XAxis dataKey="t" {...AX} interval={hourly(data.length)} />
         <YAxis {...AX} width={44} domain={[0, 100]} label={{ value: 'SOC %', angle: -90, position: 'insideLeft', fill: 'var(--color-ink-3)', fontSize: 10 }} />
         <Tooltip {...TIP} formatter={numFmt(2)} />
         <Line dataKey="soc" name="Battery SOC %" stroke="var(--color-s-battery)" strokeWidth={2} dot={false} isAnimationActive={false} />

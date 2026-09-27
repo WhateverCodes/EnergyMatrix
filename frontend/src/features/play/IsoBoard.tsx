@@ -128,7 +128,7 @@ export function IsoBoard({ network, step, c, switchStates, consumerBus, consumer
   for (let a = 0; a <= 11; a++) for (let b = -1; b <= 14; b++) {
     const q = { x: (a - b) * TW / 2, y: (a + b) * TH / 2 }
     tiles.push(<polygon key={`${a},${b}`} points={pts([{ x: q.x, y: q.y - TH / 2 }, { x: q.x + TW / 2, y: q.y }, { x: q.x, y: q.y + TH / 2 }, { x: q.x - TW / 2, y: q.y }])}
-      fill={(a + b) % 2 ? C.ground : C.ground2} stroke="#2A2540" strokeWidth={1} />)
+      fill={(a + b) % 2 ? 'var(--color-tile-a)' : 'var(--color-tile-b)'} stroke="var(--color-tile-line)" strokeWidth={1} />)
   }
 
   type Wire = { key: string; a: number; b: number; load?: number; p?: number; open: boolean; name: string; isTrafo?: boolean }
@@ -200,7 +200,7 @@ export function IsoBoard({ network, step, c, switchStates, consumerBus, consumer
         return (
           <g key={`sw${s.id}`}>
             <title>{`Switch ${s.name}: ${closed ? 'closed' : 'open'}`}</title>
-            <rect x={q.x - 6} y={q.y - 6} width={12} height={12} rx={2} fill={closed ? C.sun : '#2A2540'} stroke={INK} strokeWidth={2.5} />
+            <rect x={q.x - 6} y={q.y - 6} width={12} height={12} rx={2} fill={closed ? C.sun : 'var(--color-slot)'} stroke={INK} strokeWidth={2.5} />
           </g>
         )
       })}
@@ -249,8 +249,8 @@ export function IsoBoard({ network, step, c, switchStates, consumerBus, consumer
               </g>
             )}
             <g transform={`translate(${p.x},${p.y - (labelTop[b.id] ?? top)})`}>
-              <rect x={-33} y={-13} width={66} height={19} rx={3} fill="#1C1A28" stroke={INK} strokeWidth={2} />
-              <text className="pixel" textAnchor="middle" y={1} fontSize={10} fill="#F6F1E7">
+              <rect x={-33} y={-13} width={66} height={19} rx={3} fill="var(--color-surface)" stroke={INK} strokeWidth={2} />
+              <text className="pixel" textAnchor="middle" y={1} fontSize={10} fill="var(--color-ink)">
                 {b.id === 0 ? 'GRID 110kV' : `B${b.id} ${v != null ? v.toFixed(3) : ''}`}
               </text>
               {viol && (

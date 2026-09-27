@@ -24,7 +24,8 @@
   --color-ink: #f6f1e7;
   --color-ink-2: #cfc8de;
   --color-ink-3: #948cab;
-  --color-accent: #ffc857;        /* sun / energy */
+  --color-accent: #ffc857;        /* sun / energy (fills) */
+  --color-accent-ink: #ffc857;    /* accent used as TEXT (darker in light mode for contrast) */
   --color-accent-dim: #5a4a24;
 
   --color-ok: #6ee7a8;            /* healthy */
@@ -35,11 +36,47 @@
   --color-roof: #e8a87c;
   --color-batt: #7fd1e8;
 
+  /* chart series: 3 hues only (validated all-pairs, dark vs #1c1a28 and light vs #fffdf8) */
   --color-s-solar: #c98500;
   --color-s-demand: #3987e5;
   --color-s-battery: #199e70;
-  --color-s-alt: #d95926;
+
+  /* play board */
+  --color-board: #2e2847;
+  --color-tile-a: #3b355a;
+  --color-tile-b: #36304f;
+  --color-tile-line: #2a2540;
+  --color-slot: #2a2540;          /* empty health segment, open switch */
 }
+
+/* LIGHT MODE — its own selected steps, not an automatic inversion. Outlines stay near-black
+   (chunky city-builder look); status/text colours are darkened for contrast on cream. */
+:root[data-theme="light"] {
+  color-scheme: light;
+  --color-bg: #efe6d6;
+  --color-surface: #fffdf8;
+  --color-surface-2: #f4ecdf;
+  --color-line-strong: #d9ccb6;
+  --color-ink: #0f0e17;
+  --color-ink-2: #3a3550;
+  --color-ink-3: #6b6480;
+  --color-accent: #ffc857;
+  --color-accent-ink: #8a5a00;
+  --color-accent-dim: #f6dfa6;
+  --color-ok: #17854f;
+  --color-warn: #9a6400;
+  --color-serious: #b8521b;
+  --color-crit: #c92a2a;
+  --color-s-solar: #eda100;
+  --color-s-demand: #2a78d6;
+  --color-s-battery: #1baf7a;
+  --color-board: #cfe0c3;
+  --color-tile-a: #b9d2a6;
+  --color-tile-b: #aac894;
+  --color-tile-line: #9cbb86;
+  --color-slot: #e6dccb;
+}
+:root { color-scheme: dark; }
 
 html, body, #root { height: 100%; }
 body {

@@ -50,18 +50,18 @@ function Backtest() {
             </div>
             <ResponsiveContainer width="100%" height={260}>
               <ComposedChart data={data} margin={{ top: 8, right: 16, bottom: 0, left: 0 }}>
-                <CartesianGrid stroke="var(--color-line)" vertical={false} />
+                <CartesianGrid stroke="var(--color-line-strong)" vertical={false} />
                 <XAxis dataKey="t" {...AX} interval={7} />
                 <YAxis {...AX} width={44} domain={[0, 1.05]} label={{ value: 'pu of capacity', angle: -90, position: 'insideLeft', fill: 'var(--color-ink-3)', fontSize: 10 }} />
                 <Tooltip {...TIP} formatter={f4} />
                 <Legend {...LEG} />
-                <Area dataKey="band" name="ML P10–P90" stroke="none" fill="var(--color-s-alt)" fillOpacity={0.2} isAnimationActive={false} />
+                <Area dataKey="band" name="ML P10–P90" stroke="none" fill="var(--color-s-solar)" fillOpacity={0.2} isAnimationActive={false} />
                 <Line dataKey="actual" name="Actual" stroke="var(--color-s-demand)" strokeWidth={2} dot={false} isAnimationActive={false} />
-                <Line dataKey="p50" name="ML P50" stroke="var(--color-s-alt)" strokeWidth={2} dot={false} isAnimationActive={false} />
+                <Line dataKey="p50" name="ML P50" stroke="var(--color-s-solar)" strokeWidth={2} dot={false} isAnimationActive={false} />
                 <Line dataKey="day" name="Persistence (yesterday)" stroke="var(--color-s-battery)" strokeWidth={2} dot={false} isAnimationActive={false} />
-                <Line dataKey="last" name="Persistence (last value)" stroke="var(--color-s-solar)" strokeWidth={2} dot={false} isAnimationActive={false} />
               </ComposedChart>
             </ResponsiveContainer>
+            <p className="px-3 pb-2 text-[11px] text-ink-3">Chart limited to 3 models for colour-blind-safe contrast; last-value persistence and rolling mean are in the table.</p>
           </div>
           <div>
             <table className="w-full text-[12px]" aria-label="Backtest metrics">
@@ -108,16 +108,16 @@ function PredictiveResult({ r }: { r: Predictive }) {
         <div className="border-r border-line">
           <ResponsiveContainer width="100%" height={240}>
             <ComposedChart data={data} margin={{ top: 8, right: 16, bottom: 0, left: 0 }}>
-              <CartesianGrid stroke="var(--color-line)" vertical={false} />
+              <CartesianGrid stroke="var(--color-line-strong)" vertical={false} />
               <XAxis dataKey="t" {...AX} />
               <YAxis {...AX} width={44} domain={[0, 1.05]} />
               <Tooltip {...TIP} formatter={f4} />
               <Legend {...LEG} />
               <ReferenceLine x={r.t0} stroke="var(--color-accent)" label={{ value: 't0', fill: 'var(--color-ink-3)', fontSize: 10, position: 'insideTopLeft' }} />
-              <Area dataKey="band" name="Forecast P10–P90" stroke="none" fill="var(--color-s-alt)" fillOpacity={0.2} isAnimationActive={false} />
+              <Area dataKey="band" name="Forecast P10–P90" stroke="none" fill="var(--color-s-solar)" fillOpacity={0.2} isAnimationActive={false} />
               <Line dataKey="observed" name="Observed before t0" stroke="var(--color-ink-3)" strokeWidth={2} dot={false} isAnimationActive={false} />
               <Line dataKey="actual" name="Actual (revealed after)" stroke="var(--color-s-demand)" strokeWidth={2} dot={false} isAnimationActive={false} />
-              <Line dataKey="p50" name="Forecast P50" stroke="var(--color-s-alt)" strokeWidth={2} dot={false} isAnimationActive={false} />
+              <Line dataKey="p50" name="Forecast P50" stroke="var(--color-s-solar)" strokeWidth={2} dot={false} isAnimationActive={false} />
             </ComposedChart>
           </ResponsiveContainer>
           <div className="grid grid-cols-2 border-t border-line text-[12px]">
