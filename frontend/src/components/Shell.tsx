@@ -50,6 +50,8 @@ export function ThemeToggle() {
 
 export function Shell() {
   const loc = useLocation()
+  // ATLAS brings its own masthead (editorial style), so the chunky header is not shown there
+  if (loc.pathname === '/atlas') return <main className="min-h-full"><Outlet /></main>
   const engineer = loc.pathname !== '/'
   const tab = (to: string, label: string, active: boolean) => (
     <NavLink to={to} className={`btn px-4 h-9 inline-flex items-center text-[14px] ${active ? 'bg-accent text-ink0' : 'bg-surface text-ink-2'}`}>{label}</NavLink>
@@ -67,6 +69,7 @@ export function Shell() {
           </div>
           <div className="flex gap-2">
             {tab('/', 'PLAY', !engineer)}
+            {tab('/atlas', 'ATLAS', false)}
             {tab(engineer ? loc.pathname : '/builder', 'ENGINEER VIEW', engineer)}
           </div>
           <div className="ml-auto flex items-center gap-3"><HonestyStrip /><ThemeToggle /></div>

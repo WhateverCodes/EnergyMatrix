@@ -133,6 +133,8 @@ Errors always have the shape `{"error_code","message","details"}`, and stack tra
 
 **Light and dark mode:** use the ☀/☾ toggle in the header. It defaults to the OS setting and the choice is remembered per browser. Light mode has its own selected palette rather than an automatic inversion: a cream UI and a green board, with the near-black outlines kept, and status and text colours darkened for contrast. Chart colours are limited to three hues (blue, solar yellow, aqua) plus grey. That set passes the colour-blind and normal-vision separation checks in both themes.
 
+**ATLAS (editorial view, /atlas):** the same simulations presented as a printed field report. It uses serif typography (Fraunces, Source Serif 4, IBM Plex Mono for figures), paper-and-ink colours with one signal red, and a cartographic plan of the feeder with hairline cables, italic lettering and red callouts on overloaded cables. A written "situation" paragraph is assembled from the simulated figures, followed by a ruled list of remedies with verdicts, a large serif outcome ("Stabilised." / "Not enough." / "No feasible remedy."), and a "busiest cable through the day" strip you can click. It comes in Day print and Night print (light/dark).
+
 **ENGINEER VIEW:** Scenario Builder · Grid Twin (single-line diagram, time scrubber, inspector, charts) · Live Lab (debounced sliders, ~40–100 ms per power-flow snapshot) · Heal & Verify (all candidates, weights, apply → before/after, infeasible panel, save) · Forecast & Predict · What-If (natural language → editable parameter chips) · Library (datasets, upload, saved scenarios and comparison, hosting-capacity map).
 
 Demo script: [docs/demo.md](docs/demo.md). Q&A: [docs/judge_qa.md](docs/judge_qa.md), [docs/viva_qa.md](docs/viva_qa.md).

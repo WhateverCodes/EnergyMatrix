@@ -10,6 +10,10 @@
 4. **EXTREME SUN** → **AUTO-FIX** → red *NO FEASIBLE SOLUTION*: 35.9 % curtailment would be needed vs the 20 % cap.
 5. Switch to **ENGINEER VIEW** for the full tables, forecasts and What-If.
 
+## ATLAS (≈ 1 minute, for the "how it reads" moment)
+
+Open **ATLAS** from the header (or /atlas). Choose *A solar surge*: the plan shows lines 1–2 and 2–3 in red with "112 %" lettered beside them, and the situation paragraph explains it in a sentence. Under *Remedies considered*, click *try it →* on "Store it in the battery" to get "Stabilised." with the recorded breaches list emptying. Toggle *Night print* / *Day print* to show both themes.
+
 ## Click-by-click in ENGINEER VIEW (≈ 6 minutes)
 
 1. **Engineer view → Scenario Builder** opens on **S1 — Normal solar + Residential Society**. Point at the header strip: REAL DATA · Kaggle Plant 1 (scaled) | SYNTHETIC CONSUMER SCENARIO | BENCHMARK FEEDER · CIGRE MV | SIMULATED RESULTS.

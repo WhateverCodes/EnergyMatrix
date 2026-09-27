@@ -6,6 +6,12 @@
 @import "@fontsource/silkscreen/400.css";
 @import "@fontsource/jetbrains-mono/400.css";
 @import "@fontsource/jetbrains-mono/600.css";
+@import "@fontsource-variable/fraunces/full.css";
+@import "@fontsource-variable/fraunces/full-italic.css";
+@import "@fontsource-variable/source-serif-4/index.css";
+@import "@fontsource-variable/source-serif-4/wght-italic.css";
+@import "@fontsource/ibm-plex-mono/400.css";
+@import "@fontsource/ibm-plex-mono/500.css";
 
 /* "Playable city-builder" style: chunky flat panels, 3px near-black outlines, hard offset shadows,
    no gradients, no glow. Status is never colour-only (icons + labels everywhere). Chart series colours
@@ -122,3 +128,26 @@ select:focus, input:focus, textarea:focus, button:focus-visible { outline: 2px s
   .flow, .blink, .pop { animation: none !important; }
   .btn { transition: none; }
 }
+
+/* ───────────── ATLAS: editorial "field report" style ─────────────
+   Paper, ink and hairline rules; one signal red; serif typography; no badges, no glow. */
+
+.atlas {
+  --a-paper: #f3eee3; --a-paper-2: #ebe4d5; --a-ink: #1e1c18; --a-ink-2: #4a463d; --a-ink-3: #7c766a;
+  --a-rule: #cdc4b2; --a-rule-2: #e2dac9; --a-red: #a3302a; --a-green: #2f6b45; --a-ochre: #9a6a10; --a-cable: #34322d;
+  background: var(--a-paper); color: var(--a-ink);
+  font-family: "Source Serif 4 Variable", Georgia, serif; font-size: 16px; line-height: 1.5;
+  min-height: 100vh;
+}
+:root[data-theme="dark"] .atlas {
+  --a-paper: #17181a; --a-paper-2: #1f2023; --a-ink: #ece6d8; --a-ink-2: #bdb6a6; --a-ink-3: #8a8475;
+  --a-rule: #3a3934; --a-rule-2: #26272a; --a-red: #e0685c; --a-green: #86b894; --a-ochre: #d8a444; --a-cable: #c9c2b2;
+}
+.atlas .display { font-family: "Fraunces Variable", Georgia, serif; font-variation-settings: "opsz" 144, "SOFT" 30; letter-spacing: -0.01em; }
+.atlas .smallcaps { font-variant-caps: all-small-caps; letter-spacing: 0.06em; }
+.atlas .fig { font-family: "IBM Plex Mono", ui-monospace, monospace; font-variant-numeric: tabular-nums; font-size: 0.92em; }
+.atlas a, .atlas .link { color: var(--a-ink); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; text-decoration-color: var(--a-rule); }
+.atlas .link:hover:not(:disabled), .atlas a:hover { text-decoration-color: var(--a-ink); }
+.atlas .link:disabled { color: var(--a-ink-3); cursor: default; }
+.atlas .rule { border-color: var(--a-rule); }
+.atlas button:focus-visible { outline: 1px solid var(--a-ink); outline-offset: 3px; }
