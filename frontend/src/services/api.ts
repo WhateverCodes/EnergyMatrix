@@ -1,6 +1,6 @@
 import type {
   ApplyResult, DatasetMeta, Evaluation, HostingCapacity, LibraryScenario, LoadProfile, NetworkSummary, RunResult,
-  SavedScenario, ScenarioConfig, ScenarioSummary, Snapshot, Weights, Constraints, Backtest, Predictive,
+  SavedScenario, ScenarioConfig, ScenarioSummary, Snapshot, Weights, Constraints, Backtest, Predictive, WhatIfParse, WhatIfRun,
 } from '../types/api'
 
 export class ApiError extends Error {
@@ -48,6 +48,8 @@ export const api = {
   compare: (a: number, b: number) => req<{ a: SavedScenario; b: SavedScenario; rows: { metric: string; a: number | null; b: number | null }[] }>(`/api/history/compare?a=${a}&b=${b}`),
   backtest: (horizon: number, date?: string) => req<Backtest>(`/api/forecast/backtest?horizon=${horizon}${date ? `&date=${date}` : ''}`),
   predictive: (body: Record<string, unknown>) => post<Predictive>('/api/forecast/predictive', body),
+  whatifParse: (text: string, useLlm: boolean) => post<WhatIfParse>('/api/whatif/parse', { text, use_llm: useLlm }),
+  whatifRun: (c: ScenarioConfig, edits: unknown[], rephrase: boolean) => post<WhatIfRun>('/api/whatif/run', { config: c, edits, rephrase }),
   hosting: (c: ScenarioConfig) => post<HostingCapacity>('/api/hosting-capacity', c),
   upload: async (form: FormData) => {
     let r: Response

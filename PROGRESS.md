@@ -15,7 +15,7 @@ Resume protocol: read this file and `docs/PROJECT_BRIEF.md`, continue from the f
 | 8 | Frontend: Builder, Grid Twin, Heal & Verify | P0 path; component tests | DONE |
 | 9 | Live Lab sliders + debounce | snapshot latency logged | DONE |
 | 10 | Forecast backtest + predictive + S7/S8 UI | honest metrics; S7 PLAN_FAILED_ON_ACTUALS | DONE |
-| 11 | What-If parser, history/compare, hosting view, upload UI | parser tests (10+ phrasings) | |
+| 11 | What-If parser, history/compare, hosting view, upload UI | parser tests (10+ phrasings) | DONE |
 | 12 | Polish, demo_check.py, docs, README | `make demo-check` passes | |
 
 ## Log
@@ -54,3 +54,6 @@ Live Lab: 7 sliders (PV %, demand %, consumer scale, battery available, SOC, cur
 
 ### Phase 10 — done
 forecasting/ features (direct multi-horizon), models (3 baselines + HGB quantile P10/P50/P90), backtest (time-ordered, daylight-only MAE/RMSE/nMAE/coverage; ML beats baseline 0.093 vs 0.126 pu), predictive (forecast → QSTS on P50/P90 → evaluate → frozen plan → replay on actuals). API: GET /api/forecast/backtest, POST /api/forecast/predictive. Frontend Forecast & Predict page. Acceptance S7 (PLAN_FAILED_ON_ACTUALS) + S8 (P50 SAFE / P90 VIOLATION) pass; forecasting unit tests pass.
+
+### Phase 11 — done
+whatif/parser_rules.py (12 edit types, 18 single phrasings + cloud + compound tests), parser_llm.py + explain/llm.py (optional, lazy, validated), API /api/whatif/parse|run. Frontend What-If Lab (editable chips, run, explanation with source tag, open in Heal & Verify) and Library (dataset cards incl. upload + validation report, saved scenarios + compare-two, hosting-capacity heat overlay on the diagram + table). Verified in headless Chrome, zero console errors.

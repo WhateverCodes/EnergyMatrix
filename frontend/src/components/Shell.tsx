@@ -10,6 +10,8 @@ const NAV = [
   ['/lab', 'Live Lab'],
   ['/actions', 'Heal & Verify'],
   ['/forecast', 'Forecast & Predict'],
+  ['/whatif', 'What-If'],
+  ['/library', 'Library'],
 ] as const
 
 export function HonestyStrip() {

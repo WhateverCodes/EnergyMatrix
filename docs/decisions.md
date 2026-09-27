@@ -52,3 +52,7 @@
 - Forecast scenarios reuse the whole evaluator through ScenarioConfig.gen_pu_override (+ gen_label for honesty labelling).
 - Plan replay freezes switch states + per-step battery MW, curtailment fraction and per-inverter Q (StepRecord.pv_q_each) and applies them with no corrective levers.
 - S7 uses HGB (not naive persistence): P50 says SAFE, P90 flags risk, P50 plan fails on actuals when the cloud clears. S8 multiplier set to 43 (P50 peak×43 below violation point, P90 peak×43 above).
+- What-If: rule-based parser is the default and the fallback; it maps words to 12 typed INPUT edits (never electrical values). Unrecognised clauses are returned as "unparsed", never guessed. Clause splitting keeps decimals intact.
+- Optional LLM (only if ANTHROPIC_API_KEY set and `anthropic` installed, imported lazily; not in requirements.txt): claude-opus-5 with server-side refusal fallbacks ("default", beta server-side-fallback-2026-07-01), effort low. Parser output is JSON-schema constrained and re-validated by applying it to a ScenarioConfig; rephrased explanations are rejected unless every number already appears in the template.
+- Uploaded datasets are labelled "UPLOADED · UNVERIFIED" in the UI and honesty strip (not "REAL").
+- Hosting-capacity colour ramp scales to the largest non-capped bus value (buses 1/12 hit the 30 MW search cap).

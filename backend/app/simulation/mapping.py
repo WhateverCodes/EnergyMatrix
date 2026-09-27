@@ -178,8 +178,10 @@ def build_inputs(cfg: ScenarioConfig, gen_pu_override: np.ndarray | None = None)
         net.line.at[li, "in_service"] = False
 
     ds_is_real = bool(ds_meta.get("is_real"))
+    uploaded = ds_meta.get("source") == "User upload"
     honesty = {
-        "generation": (f"REAL DATA · {ds_meta['name']} (scaled)" if ds_is_real else f"SYNTHETIC · {ds_meta['name']}"),
+        "generation": (f"UPLOADED DATA · {ds_meta['name']} (unverified, scaled)" if uploaded
+                       else f"REAL DATA · {ds_meta['name']} (scaled)" if ds_is_real else f"SYNTHETIC · {ds_meta['name']}"),
         "generation_is_real": ds_is_real,
         "generation_label": ds_meta.get("label", ""),
         "consumption": "SYNTHETIC CONSUMER SCENARIO",

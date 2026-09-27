@@ -106,3 +106,12 @@ def test_forecast_endpoints(client):
     assert s7["outcome"] == "PLAN_FAILED_ON_ACTUALS"
     bad = client.post("/api/forecast/predictive", json={"scenario_id": "S7", "model": "gpt"})
     assert bad.json()["error_code"] == "UNKNOWN_MODEL"
+
+
+def test_whatif_parse_and_run(client):
+    p = client.post("/api/whatif/parse", json={"text": "increase solar by 150% and take the battery offline"}).json()
+    assert {e["param"] for e in p["edits"]} == {"pv_pct", "battery_enabled"}
+    cfg = get_scenario("S1")["config"]
+    r = client.post("/api/whatif/run", json={"config": cfg, "edits": p["edits"]}).json()
+    assert r["config"]["battery"]["enabled"] is False and r["config"]["pv_scale"] == 2.5
+    assert r["baseline"]["status"] == "VIOLATION" and r["explanation"]["source"] == "template"

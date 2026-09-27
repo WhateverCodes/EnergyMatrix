@@ -145,3 +145,12 @@ export interface Predictive {
   replay: { outcome: string; failing_steps: string[]; steps: { label: string; status: string; max_v: number | null; max_line: number | null; battery_p_mw: number; curtail_pct: number }[] }
   outcome: string; why: string | null; honesty: Honesty & { forecast: string }
 }
+
+export interface WhatIfEdit { param: string; value: unknown; label: string; source?: string }
+export interface WhatIfParse { edits: WhatIfEdit[]; unparsed: string[]; parser: string; notes: string[]; llm_available: boolean }
+export interface WhatIfRun {
+  config: ScenarioConfig; edits: WhatIfEdit[]
+  baseline: { status: string; metrics: Metrics; violations: Violation[] }
+  evaluation_status: string; recommended: Candidate | null; explanation: { text: string; source: string; note?: string }
+  infeasibility: Infeasibility | null; honesty: Honesty
+}

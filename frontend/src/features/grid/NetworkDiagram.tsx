@@ -16,6 +16,8 @@ interface Props {
   onSelect?: (s: Selection) => void
   height?: number
   title?: string
+  /** Optional per-bus overlay (e.g. hosting capacity) replacing the voltage colouring. */
+  busOverlay?: Record<number, { fill: string; label: string }>
 }
 
 const X0 = 40, SX = 58, Y0 = 26, SY = 34, YTOP = 16
@@ -39,7 +41,7 @@ function lineTone(loading: number | undefined, max: number) {
 }
 
 export function NetworkDiagram({ network, step, switchStates, vMin = 0.95, vMax = 1.05, lineMax = 100, battery, pvBuses = [],
-  selected, onSelect, height = 520, title }: Props) {
+  selected, onSelect, height = 520, title, busOverlay }: Props) {
   const bus = Object.fromEntries(network.buses.map((b) => [b.id, b]))
   const swOpen = (lineId: number) =>
     network.switches.some((s) => s.et === 'l' && s.element === lineId &&
@@ -107,7 +109,8 @@ export function NetworkDiagram({ network, step, switchStates, vMin = 0.95, vMax 
       {/* buses */}
       {network.buses.map((b) => {
         const v = step?.bus_vm[b.id]
-        const tone = b.vn_kv > 100 ? { fill: 'var(--color-ink-2)', tone: 'slack' } : busTone(v, vMin, vMax)
+        const ov = busOverlay?.[b.id]
+        const tone = b.vn_kv > 100 ? { fill: 'var(--color-ink-2)', tone: 'slack' } : ov ? { fill: ov.fill, tone: 'overlay' } : busTone(v, vMin, vMax)
         const x = px(b.x), y = py(b.y)
         const hasPv = pvBuses.includes(b.id)
         const isBatt = battery?.bus === b.id
@@ -117,7 +120,8 @@ export function NetworkDiagram({ network, step, switchStates, vMin = 0.95, vMax 
             <rect x={x - 9} y={y - 3} width={18} height={6} rx={1} fill={tone.fill} stroke="var(--color-bg)" strokeWidth={2} />
             {sel('bus', b.id) && <rect x={x - 13} y={y - 7} width={26} height={14} fill="none" stroke="var(--color-accent)" />}
             <text x={x + 12} y={y - 5} fontSize={10} fill="var(--color-ink-2)">{b.id === 0 ? '110 kV grid' : `B${b.id}`}</text>
-            {v !== undefined && v !== null && b.vn_kv < 100 && (
+            {ov && <text x={x + 12} y={y + 8} className="num" fontSize={10} fill="var(--color-ink-2)">{ov.label}</text>}
+            {!ov && v !== undefined && v !== null && b.vn_kv < 100 && (
               <text x={x + 12} y={y + 8} className="num" fontSize={10}
                 fill={tone.tone === 'crit' ? 'var(--color-crit)' : tone.tone === 'warn' ? 'var(--color-warn)' : 'var(--color-ink-3)'}>
                 {tone.tone === 'crit' ? '▲' : ''}{v.toFixed(3)}
