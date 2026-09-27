@@ -49,7 +49,7 @@ export default function WhatIfPage() {
             {EXAMPLES.map((x) => <button key={x} onClick={() => setText(x)} className="text-[11px] px-2 h-6 border border-line-strong text-ink-3 hover:text-ink">{x}</button>)}
           </div>
           <div className="flex flex-wrap items-center gap-3">
-            <button onClick={() => parseM.mutate()} className="inline-flex items-center gap-2 px-3 h-8 border border-accent text-accent-ink"><Sparkles size={14} /> PARSE</button>
+            <button onClick={() => parseM.mutate()} className="inline-flex items-center gap-2 px-3 h-8 border border-accent text-accent-ink"><Sparkles size={14} /> Parse</button>
             <label className="text-[12px] text-ink-2 inline-flex items-center gap-1" title={p && !p.llm_available ? 'Set ANTHROPIC_API_KEY and install anthropic to enable' : ''}>
               <input type="checkbox" checked={useLlm} disabled={p ? !p.llm_available : false} onChange={(e) => setUseLlm(e.target.checked)} /> LLM parser{p && !p.llm_available ? ' (no API key — rule parser)' : ''}
             </label>
@@ -77,7 +77,7 @@ export default function WhatIfPage() {
           {p?.unparsed.length ? <p className="px-3 pb-2 text-[12px] text-warn">Not understood (ignored): {p.unparsed.map((u) => `“${u}”`).join(', ')}</p> : null}
           {p?.notes.map((n) => <p key={n} className="px-3 pb-2 text-[11px] text-ink-3">{n}</p>)}
           <div className="flex items-center gap-3 px-3 pb-3">
-            <button onClick={() => runM.mutate()} disabled={!edits.length || runM.isPending} className="btn inline-flex items-center gap-2 px-3 h-9 bg-accent text-ink0 disabled:opacity-40"><Play size={14} /> RUN TWIN</button>
+            <button onClick={() => runM.mutate()} disabled={!edits.length || runM.isPending} className="btn inline-flex items-center gap-2 px-3 h-9 bg-accent text-on-accent border-transparent disabled:opacity-40"><Play size={14} /> Run twin</button>
             <label className="text-[12px] text-ink-2 inline-flex items-center gap-1"><input type="checkbox" checked={rephrase} onChange={(e) => setRephrase(e.target.checked)} /> LLM plain-language rephrase (numbers verified)</label>
             {runM.isPending && <Spinner label="simulating baseline and every corrective action…" />}
           </div>

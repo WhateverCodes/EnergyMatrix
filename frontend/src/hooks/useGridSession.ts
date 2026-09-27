@@ -48,12 +48,19 @@ export function useGridSession() {
     const worst = Math.max(0, r.steps.findIndex((s) => s.label === r.summary.worst_step))
     setK(r.summary.worst_step ? worst : Math.floor(r.steps.length / 2))
     const hard = r.summary.violations.filter((v) => v.hard)
+    const say = (v: (typeof hard)[number]) => {
+      const n = v.steps?.length ?? 0
+      const dur = `for ${n} × 15 min`
+      if (v.type === 'LINE_OVERLOAD' || v.type === 'TRAFO_OVERLOAD') return `${v.name} is overloaded: ${fmt(v.value, 0)}% of its rating, ${dur}.`
+      if (v.type === 'OVERVOLTAGE') return `Voltage too high at ${v.name}: ${fmt(v.value, 3)} pu (limit ${fmt(v.limit, 2)}), ${dur}.`
+      if (v.type === 'UNDERVOLTAGE') return `Voltage too low at ${v.name}: ${fmt(v.value, 3)} pu (limit ${fmt(v.limit, 2)}), ${dur}.`
+      return `${v.type.replace(/_/g, ' ').toLowerCase()} at ${v.name}, ${dur}.`
+    }
     push([
-      { t: r.steps[0].label, tone: 'info', text: `Scenario loaded: ${sc.title}. ${r.scenario.installed_pv_mw.toFixed(1)} MW rooftop solar installed.` },
-      { t: r.steps[0].label, tone: hard.length ? 'bad' : 'ok', text: `Simulated ${r.steps.length} steps (15 min each): grid ${r.summary.health_label}.` },
-      ...hard.slice(0, 4).map((v) => ({ t: v.steps?.[0] ?? '', tone: 'bad' as const,
-        text: `${v.type.replace(/_/g, ' ')} at ${v.name}: ${fmt(v.value, v.type.includes('VOLTAGE') ? 3 : 1)} vs limit ${fmt(v.limit, v.type.includes('VOLTAGE') ? 2 : 0)} (${v.steps?.length ?? 0} steps)` })),
-      ...(hard.length ? [{ t: '', tone: 'warn' as const, text: 'Pick an action on the right — each one is simulated over every step.' }] : []),
+      { t: r.steps[0].label, tone: 'info', text: `${sc.title}. ${r.scenario.installed_pv_mw.toFixed(1)} MW of rooftop solar installed.` },
+      { t: r.steps[0].label, tone: hard.length ? 'bad' : 'ok', text: hard.length ? `Simulated the day in ${r.steps.length} quarter-hours: ${hard.length} limit ${hard.length === 1 ? 'breach' : 'breaches'} found.` : `Simulated the day in ${r.steps.length} quarter-hours: every limit respected.` },
+      ...hard.slice(0, 4).map((v) => ({ t: v.steps?.[0] ?? '', tone: 'bad' as const, text: say(v) })),
+      ...(hard.length ? [{ t: '', tone: 'warn' as const, text: 'Choose a corrective action on the right to try it.' }] : []),
     ])
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [run.data])
@@ -79,7 +86,7 @@ export function useGridSession() {
       const t = step?.label ?? ''
       if (ev.status === 'NO_ACTION_NEEDED') {
         setBanner({ kind: 'ok', title: 'ALREADY HEALTHY', reason: ev.explanation })
-        push([{ t, tone: 'ok', text: 'No action needed — the grid is within every limit.' }])
+        push([{ t, tone: 'ok', text: 'Nothing to fix: the grid stays within every limit.' }])
         return
       }
       let key2 = key
@@ -87,7 +94,7 @@ export function useGridSession() {
       const cand = ev.candidates.find((x) => x.key === key2)
       if (!cand || !cand.available) {
         setBanner({ kind: 'na', title: 'NOT AVAILABLE', reason: cand?.unavailable_reason ?? 'This action is not available in this scenario.' })
-        push([{ t, tone: 'warn', text: `${cand?.name ?? key}: not available — ${cand?.unavailable_reason ?? ''}` }])
+        push([{ t, tone: 'warn', text: `${cand?.name ?? key} is not available: ${cand?.unavailable_reason ?? ''}.` }])
         return
       }
       const res = await api.apply(cfg, key2)
@@ -97,10 +104,10 @@ export function useGridSession() {
       if (wi >= 0) setK(wi)
       if (res.verified) {
         setBanner({ kind: 'ok', title: 'GRID STABILIZED', reason: key === 'auto' ? ev.explanation : cand.explanation })
-        push([{ t, tone: 'ok', text: `${cand.name}: every step now within limits (verified by re-simulation).` }])
+        push([{ t, tone: 'ok', text: `${cand.name} works: every quarter-hour is now within limits (re-simulated).` }])
       } else if (key === 'auto') {
         setBanner({ kind: 'bad', title: 'NO FEASIBLE SOLUTION', reason: ev.explanation })
-        push([{ t, tone: 'bad', text: `No combination works under current limits. ${ev.infeasibility?.minimum_intervention.required_curtailment_pct !== undefined ? `Would need ${fmt(ev.infeasibility.minimum_intervention.required_curtailment_pct, 1)}% solar trimmed vs ${fmt(ev.infeasibility.minimum_intervention.cap_pct, 0)}% cap.` : ''}` }])
+        push([{ t, tone: 'bad', text: `No combination works under the current limits. ${ev.infeasibility?.minimum_intervention.required_curtailment_pct !== undefined ? `It would take ${fmt(ev.infeasibility.minimum_intervention.required_curtailment_pct, 1)}% solar trimming against a ${fmt(ev.infeasibility.minimum_intervention.cap_pct, 0)}% cap.` : ''}` }])
       } else {
         const f = cand.failure
         const bc = f?.binding_constraint
@@ -109,7 +116,7 @@ export function useGridSession() {
           kind: 'bad', title: 'NOT ENOUGH', reason,
           detail: ev.status === 'NO_FEASIBLE_SOLUTION_UNDER_CURRENT_CONSTRAINTS' ? 'No action fixes this scenario — try AUTO-FIX to see the minimum intervention needed.' : `${cand.metrics?.n_violation_steps} of ${cand.metrics?.n_steps} steps still violate. Try another action or AUTO-FIX.`,
         })
-        push([{ t, tone: 'bad', text: `${cand.name}: not enough — ${f?.why?.[0] ?? 'violations remain'}` }])
+        push([{ t, tone: 'bad', text: `${cand.name} is not enough: ${f?.why?.[0] ?? 'some limits are still broken'}.` }])
       }
     } catch (e) {
       setBanner({ kind: 'bad', title: 'ERROR', reason: (e as Error).message })

@@ -77,8 +77,8 @@ export default function LabPage() {
           {slider('Curtailment cap', 'curtailment_cap_pct', 0, 100, 5, '%')}
           {slider('V max', 'v_max', 1.02, 1.1, 0.005, ' pu')}
           <div className="p-3">
-            <button onClick={fullEvaluation} className="w-full inline-flex justify-center items-center gap-2 px-3 h-8 btn bg-accent text-ink0">
-              <FlaskConical size={14} /> RUN FULL EVALUATION
+            <button onClick={fullEvaluation} className="w-full inline-flex justify-center items-center gap-2 px-3 h-8 btn bg-accent text-on-accent border-transparent">
+              <FlaskConical size={14} /> Run full evaluation
             </button>
             <p className="text-[11px] text-ink-3 mt-2">Applies these inputs to the whole window and simulates every corrective action.</p>
           </div>

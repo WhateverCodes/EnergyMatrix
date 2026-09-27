@@ -47,8 +47,8 @@ export default function ActionsPage() {
     <div>
       <div className="flex flex-wrap items-center gap-3 px-3 py-2 border-b border-line bg-surface">
         <button onClick={() => evalM.mutate(weights ?? undefined)} disabled={evalM.isPending}
-          className="btn inline-flex items-center gap-2 px-3 h-9 bg-accent text-ink0 disabled:opacity-40">
-          <Search size={14} /> FIND CORRECTIVE ACTIONS
+          className="btn inline-flex items-center gap-2 px-3 h-9 bg-accent text-on-accent border-transparent disabled:opacity-40">
+          <Search size={14} /> Find corrective actions
         </button>
         {evalM.isPending && <Spinner label="simulating every candidate over every step…" />}
         <span className="text-[12px] text-ink-3">{config.name} · {config.date} {config.start}–{config.end}</span>
@@ -96,7 +96,7 @@ export default function ActionsPage() {
         <div className="flex flex-wrap items-center gap-2 px-3 py-3 border-t border-line">
           <input type="text" aria-label="Scenario name" placeholder={config.name} value={name} onChange={(e) => setName(e.target.value)} className="w-64" />
           <button onClick={() => saveM.mutate()} disabled={saveM.isPending} className="inline-flex items-center gap-2 btn px-3 h-9 bg-surface-2 text-ink">
-            <Save size={14} /> SAVE SCENARIO
+            <Save size={14} /> Save scenario
           </button>
           {saveM.data && <span className="text-ok text-[12px]">Saved #{saveM.data.id} · {saveM.data.feasibility.replace(/_/g, ' ')}</span>}
           {saveM.error ? <ErrorBox error={saveM.error} /> : null}

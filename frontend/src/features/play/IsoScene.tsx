@@ -28,13 +28,13 @@ const sub = (q: [P2, P2, P2, P2], u0: number, u1: number, v0: number, v1: number
 type Pal = ReturnType<typeof palette>
 function palette(night: boolean) {
   return night ? {
-    grass: '#2c4a3c', grass2: '#284437', soilL: '#3b2d24', soilR: '#2f241d', lip: '#355a47',
+    ground: '#172a40', edgeL: '#0f1e30', edgeR: '#0b1726',
     wall: '#c9c2d8', wall2: '#a9a1bd', roof: '#b0573f', window: '#ffd66b', windowOff: '#39405c', glass: '#4f6fb0',
     trunk: '#5a4232', leaf: '#2f7a55', leaf2: '#3a8f63', panel: '#1d2b57', panelLine: '#6d86c9',
     metal: '#8d93a8', concrete: '#6d7086', batt: '#3fb8c9', tower: '#8a7cc9', label: '#1c1a28', labelInk: '#f6f1e7',
     ok: '#3fd0e0', busy: '#ffb13b', bad: '#ff5d5d', flow: '#e8fbff', line: '#0f0e17', open: '#6b6585', cloud: '#2a3350',
   } : {
-    grass: '#bfe3b4', grass2: '#b4dca8', soilL: '#9a7452', soilR: '#835f42', lip: '#9fd190',
+    ground: '#ffffff', edgeL: '#dfe6ee', edgeR: '#d0d9e3',
     wall: '#fbf6ec', wall2: '#e9e1d2', roof: '#e0714f', window: '#9fd3ef', windowOff: '#9fd3ef', glass: '#8cc7ea',
     trunk: '#8a6446', leaf: '#4caf6e', leaf2: '#63c181', panel: '#26407f', panelLine: '#8fb1ee',
     metal: '#9aa3b5', concrete: '#c9cdd6', batt: '#35b6c7', tower: '#9d8cd6', label: '#ffffff', labelInk: '#1c1a28',
@@ -278,16 +278,6 @@ function Tree({ p, pal, s = 1 }: { p: P2; pal: Pal; s?: number }) {
   )
 }
 
-function Cloud({ x, y, s, fill }: { x: number; y: number; s: number; fill: string }) {
-  return (
-    <g fill={fill} opacity={0.92}>
-      <ellipse cx={x} cy={y} rx={34 * s} ry={11 * s} />
-      <circle cx={x - 12 * s} cy={y - 8 * s} r={12 * s} />
-      <circle cx={x + 8 * s} cy={y - 12 * s} r={15 * s} />
-    </g>
-  )
-}
-
 /* ───────── scene ───────── */
 export type Building = 'grid' | 'substation' | 'house' | 'tower' | 'factory' | 'school' | 'hospital' | 'office'
 
@@ -317,16 +307,10 @@ export function IsoScene({ network, step, c, switchStates, consumerBus, consumer
   const busCol = (v: number | null | undefined) => v == null ? pal.open : (v > c.v_max || v < c.v_min) ? pal.bad : (v > c.v_max - 0.01 || v < c.v_min + 0.01) ? pal.busy : pal.ok
   const wireCol = (load: number | undefined, max: number) => load === undefined ? pal.open : load > max ? pal.bad : load > 0.8 * max ? pal.busy : pal.ok
 
-  // island platform (tile space a ∈ [0,11], b ∈ [-1,14])
+  // plain ground plane (tile space a ∈ [0,11], b ∈ [-1,14]): one flat colour, no pattern
   const a0 = -0.5, a1 = 11.5, b0 = -1.5, b1 = 14.5
-  const right = tileIso(a1, b0), bottom = tileIso(a1, b1), left = tileIso(a0, b1)
-  const T = 26
-  const tiles: ReactNode[] = []
-  for (let a = 0; a <= 11; a++) for (let b = -1; b <= 14; b++) {
-    const q = tileIso(a, b)
-    tiles.push(<polygon key={`${a},${b}`} points={pts([{ x: q.x, y: q.y - TH / 2 }, { x: q.x + TW / 2, y: q.y }, { x: q.x, y: q.y + TH / 2 }, { x: q.x - TW / 2, y: q.y }])}
-      fill={(a + b) % 2 ? pal.grass : pal.grass2} />)
-  }
+  const top = tileIso(a0, b0), right = tileIso(a1, b0), bottom = tileIso(a1, b1), left = tileIso(a0, b1)
+  const T = 10
 
   type Wire = { key: string; a: number; b: number; load?: number; p?: number; open: boolean; name: string; max: number }
   const wires: Wire[] = [
@@ -398,32 +382,15 @@ export function IsoScene({ network, step, c, switchStates, consumerBus, consumer
   const xs = network.buses.map((b) => P(b.id).x), ys = network.buses.map((b) => P(b.id).y)
   // frame the buildings (the island continues past the edges like a cropped illustration)
   const minX = Math.min(...xs) - 95, maxX = Math.max(...xs) + 95
-  const minY = Math.min(...ys) - 175, maxY = Math.max(...ys) + 75
+  const minY = Math.min(...ys) - 140, maxY = Math.max(...ys) + 70
 
   return (
     <svg viewBox={`${minX} ${minY} ${maxX - minX} ${maxY - minY}`} className="w-full h-full select-none" role="img"
       aria-label="Illustrated isometric map of the feeder: buildings at buses, wires coloured by loading, dots show power flow">
-      {/* sky decoration */}
-      {night ? (
-        <g>
-          <circle cx={maxX - 90} cy={minY + 60} r={22} fill="#f3eccf" />
-          <circle cx={maxX - 80} cy={minY + 54} r={20} fill="var(--color-board)" />
-          {Array.from({ length: 26 }, (_, i) => <circle key={i} cx={minX + (hash(i, 3) % 1000) / 1000 * (maxX - minX)} cy={minY + 10 + (hash(i, 7) % 140)} r={hash(i, 1) % 3 === 0 ? 1.6 : 1} fill="#fff" opacity={0.7} />)}
-        </g>
-      ) : (
-        <g>
-          <circle cx={maxX - 90} cy={minY + 62} r={26} fill="#ffd34d" />
-          {Array.from({ length: 10 }, (_, i) => { const a = (i / 10) * Math.PI * 2; return <line key={i} x1={maxX - 90 + Math.cos(a) * 34} y1={minY + 62 + Math.sin(a) * 34} x2={maxX - 90 + Math.cos(a) * 44} y2={minY + 62 + Math.sin(a) * 44} stroke="#ffd34d" strokeWidth={3} strokeLinecap="round" /> })}
-        </g>
-      )}
-      <Cloud x={minX + 180} y={minY + 70} s={1.1} fill={pal.cloud} />
-      <Cloud x={minX + 520} y={minY + 40} s={0.8} fill={pal.cloud} />
-
-      {/* island */}
-      <polygon points={pts([left, bottom, { x: bottom.x, y: bottom.y + T }, { x: left.x, y: left.y + T }])} fill={pal.soilL} />
-      <polygon points={pts([bottom, right, { x: right.x, y: right.y + T }, { x: bottom.x, y: bottom.y + T }])} fill={pal.soilR} />
-      <polyline points={pts([left, bottom, right])} fill="none" stroke={pal.lip} strokeWidth={4} />
-      <g onClick={() => onSelect(null)}>{tiles}</g>
+      {/* plain ground plane */}
+      <polygon points={pts([left, bottom, { x: bottom.x, y: bottom.y + T }, { x: left.x, y: left.y + T }])} fill={pal.edgeL} />
+      <polygon points={pts([bottom, right, { x: right.x, y: right.y + T }, { x: bottom.x, y: bottom.y + T }])} fill={pal.edgeR} />
+      <polygon points={pts([top, right, bottom, left])} fill={pal.ground} onClick={() => onSelect(null)} />
 
       {/* energy lines */}
       {wires.map((w) => {

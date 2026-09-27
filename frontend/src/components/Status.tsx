@@ -19,12 +19,14 @@ const STYLES: Record<string, { cls: string; icon: ReactNode; label?: string }> =
   LOW: { cls: 'text-warn border-warn/50', icon: <AlertTriangle size={13} /> },
 }
 
+const sentence = (t: string) => { const l = t.replace(/_/g, ' ').toLowerCase(); return l.charAt(0).toUpperCase() + l.slice(1) }
+
 export function StatusBadge({ status, label }: { status: string; label?: string }) {
   const s = STYLES[status] ?? { cls: 'text-ink-2 border-line-strong', icon: <Info size={13} /> }
   return (
-    <span className={`inline-flex items-center gap-1 border-2 px-1.5 py-0.5 text-[11px] font-semibold tracking-wide rounded ${s.cls}`}>
+    <span className={`inline-flex items-center gap-1 border px-2 py-0.5 text-[12px] font-medium rounded-full ${s.cls}`}>
       {s.icon}
-      {label ?? s.label ?? status.replace(/_/g, ' ')}
+      {sentence(label ?? s.label ?? status)}
     </span>
   )
 }
@@ -53,8 +55,8 @@ export function Kpi({ label, value, sub, tone }: { label: string; value: string;
   const toneCls = tone === 'crit' ? 'text-crit' : tone === 'warn' ? 'text-warn' : 'text-ink'
   const icon = tone === 'crit' ? <AlertOctagon size={12} className="text-crit" /> : tone === 'warn' ? <AlertTriangle size={12} className="text-warn" /> : null
   return (
-    <div className="px-3 py-2 border-r border-line last:border-r-0 min-w-0">
-      <div className="text-[10px] uppercase tracking-wider text-ink-3 flex items-center gap-1">{icon}{label}</div>
+    <div className="px-4 py-3 border-r border-line last:border-r-0 min-w-0">
+      <div className="text-[12px] text-ink-3 flex items-center gap-1">{icon}{label}</div>
       <div className={`num text-[17px] leading-6 ${toneCls}`}>{value}</div>
       {sub ? <div className="text-[10px] text-ink-3 truncate">{sub}</div> : null}
     </div>
@@ -63,9 +65,9 @@ export function Kpi({ label, value, sub, tone }: { label: string; value: string;
 
 export function Section({ title, right, children, className = '' }: { title: string; right?: ReactNode; children: ReactNode; className?: string }) {
   return (
-    <section className={`chunk m-2 overflow-hidden ${className}`}>
-      <header className="flex items-center justify-between px-3 h-9 border-b-3 border-ink0 bg-surface-2">
-        <h2 className="pixel text-[11px] text-accent-ink">{title}</h2>
+    <section className={`chunk m-3 overflow-hidden ${className}`}>
+      <header className="flex items-center justify-between px-4 h-10 border-b border-line">
+        <h2 className="text-[13px] font-medium text-ink-2">{title}</h2>
         {right}
       </header>
       <div>{children}</div>

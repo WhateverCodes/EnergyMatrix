@@ -4,11 +4,11 @@ import {
 import type { StepRecord } from '../types/api'
 
 // Mark specs (dataviz): 2px lines, hairline recessive grid, legend for >= 2 series, text in ink tokens.
-const AX = { stroke: 'var(--color-line-strong)', tick: { fill: 'var(--color-ink-3)', fontSize: 10, fontFamily: 'JetBrains Mono' } }
+const AX = { stroke: 'var(--color-line-strong)', tick: { fill: 'var(--color-ink-3)', fontSize: 10, fontFamily: 'IBM Plex Mono' } }
 const GRID = <CartesianGrid stroke="var(--color-line-strong)" strokeWidth={1} vertical={false} />
 const TIP = {
   contentStyle: { background: 'var(--color-surface-2)', border: '1px solid var(--color-line-strong)', borderRadius: 2, fontSize: 11 },
-  labelStyle: { color: 'var(--color-ink-2)' }, itemStyle: { color: 'var(--color-ink)', fontFamily: 'JetBrains Mono', padding: 0 },
+  labelStyle: { color: 'var(--color-ink-2)' }, itemStyle: { color: 'var(--color-ink)', fontFamily: 'IBM Plex Mono', padding: 0 },
   cursor: { stroke: 'var(--color-ink-3)', strokeWidth: 1 },
 }
 // Legend text stays in ink tokens; the swatch beside it carries the series colour.

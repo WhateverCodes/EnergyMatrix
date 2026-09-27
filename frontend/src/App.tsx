@@ -4,7 +4,6 @@ import { ScenarioProvider } from './app/ScenarioContext'
 import { Shell } from './components/Shell'
 import BuilderPage from './pages/BuilderPage'
 import PlayPage from './pages/PlayPage'
-import AtlasPage from './pages/AtlasPage'
 import GridPage from './pages/GridPage'
 import ActionsPage from './pages/ActionsPage'
 import LabPage from './pages/LabPage'
@@ -22,7 +21,6 @@ export default function App() {
           <Routes>
             <Route element={<Shell />}>
               <Route index element={<PlayPage />} />
-              <Route path="atlas" element={<AtlasPage />} />
               <Route path="builder" element={<BuilderPage />} />
               <Route path="grid" element={<GridPage />} />
               <Route path="lab" element={<LabPage />} />

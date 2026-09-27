@@ -1,88 +1,73 @@
 @import "tailwindcss";
-@import "@fontsource/chakra-petch/400.css";
-@import "@fontsource/chakra-petch/500.css";
-@import "@fontsource/chakra-petch/600.css";
-@import "@fontsource/chakra-petch/700.css";
-@import "@fontsource/silkscreen/400.css";
-@import "@fontsource/jetbrains-mono/400.css";
-@import "@fontsource/jetbrains-mono/600.css";
-@import "@fontsource-variable/fraunces/full.css";
-@import "@fontsource-variable/fraunces/full-italic.css";
-@import "@fontsource-variable/source-serif-4/index.css";
-@import "@fontsource-variable/source-serif-4/wght-italic.css";
+@import "@fontsource/ibm-plex-sans/400.css";
+@import "@fontsource/ibm-plex-sans/500.css";
+@import "@fontsource/ibm-plex-sans/600.css";
 @import "@fontsource/ibm-plex-mono/400.css";
 @import "@fontsource/ibm-plex-mono/500.css";
 
-/* "Playable city-builder" style: chunky flat panels, 3px near-black outlines, hard offset shadows,
-   no gradients, no glow. Status is never colour-only (icons + labels everywhere). Chart series colours
-   keep the palette validated earlier with the dataviz validator. */
+/* Calm, technical design system: warm neutral canvas, one blueprint-blue accent, thin borders,
+   soft cards, sentence case. Status is never colour-only (text + dot/icon). Chart series colours are
+   the palette validated with the dataviz validator for both themes. */
 @theme {
-  --font-sans: "Chakra Petch", ui-sans-serif, system-ui, sans-serif;
-  --font-mono: "JetBrains Mono", ui-monospace, monospace;
-  --font-pixel: "Silkscreen", ui-monospace, monospace;
+  --font-sans: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
 
-  --color-ink0: #0f0e17;          /* outlines, text on light fills */
-  --color-bg: #2a2540;            /* page */
-  --color-surface: #1c1a28;       /* panels */
-  --color-surface-2: #262338;     /* inputs, inner panels */
-  --color-line: #0f0e17;
-  --color-line-strong: #3a3552;
-  --color-ink: #f6f1e7;
-  --color-ink-2: #cfc8de;
-  --color-ink-3: #948cab;
-  --color-accent: #ffc857;        /* sun / energy (fills) */
-  --color-accent-ink: #ffc857;    /* accent used as TEXT (darker in light mode for contrast) */
-  --color-accent-dim: #5a4a24;
+  /* dark (default) */
+  --color-ink0: #0e1116;
+  --color-bg: #111418;
+  --color-surface: #171b20;
+  --color-surface-2: #1d2228;
+  --color-line: #2a3037;
+  --color-line-strong: #353c45;
+  --color-ink: #eceae4;
+  --color-ink-2: #b7b3a9;
+  --color-ink-3: #827e75;
+  --color-accent: #7aa7e6;
+  --color-accent-ink: #9cc0f2;
+  --color-on-accent: #0b1726;
+  --color-accent-dim: #1d2d44;
 
-  --color-ok: #6ee7a8;            /* healthy */
-  --color-warn: #ffc857;
-  --color-serious: #ff9f5a;
-  --color-crit: #ff5d5d;          /* violation */
+  --color-ok: #6cc49a;
+  --color-warn: #e2b45c;
+  --color-serious: #ec9a6a;
+  --color-crit: #ef7a66;
   --color-tower: #9d8cd6;
   --color-roof: #e8a87c;
   --color-batt: #7fd1e8;
 
-  /* chart series: 3 hues only (validated all-pairs, dark vs #1c1a28 and light vs #fffdf8) */
   --color-s-solar: #c98500;
   --color-s-demand: #3987e5;
   --color-s-battery: #199e70;
 
-  /* play board */
-  --color-board: #141b2d;
-  --color-wire-ok: #3fd0e0;
-  --color-tile-a: #3b355a;
-  --color-tile-b: #36304f;
-  --color-tile-line: #2a2540;
-  --color-slot: #2a2540;          /* empty health segment, open switch */
+  --color-board: #0c1a2b;
+  --color-wire-ok: #4fc3d9;
+  --color-slot: #2a3037;
 }
 
-/* LIGHT MODE — its own selected steps, not an automatic inversion. Outlines stay near-black
-   (chunky city-builder look); status/text colours are darkened for contrast on cream. */
 :root[data-theme="light"] {
   color-scheme: light;
-  --color-bg: #efe6d6;
-  --color-surface: #fffdf8;
-  --color-surface-2: #f4ecdf;
-  --color-line-strong: #d9ccb6;
-  --color-ink: #0f0e17;
-  --color-ink-2: #3a3550;
-  --color-ink-3: #6b6480;
-  --color-accent: #ffc857;
-  --color-accent-ink: #8a5a00;
-  --color-accent-dim: #f6dfa6;
-  --color-ok: #17854f;
-  --color-warn: #9a6400;
+  --color-bg: #f5f4f0;
+  --color-surface: #ffffff;
+  --color-surface-2: #f8f7f4;
+  --color-line: #e4e1d8;
+  --color-line-strong: #d3cfc3;
+  --color-ink: #1c1b19;
+  --color-ink-2: #55524a;
+  --color-ink-3: #8a867b;
+  --color-accent: #1f5fa8;
+  --color-accent-ink: #1f5fa8;
+  --color-on-accent: #ffffff;
+  --color-accent-dim: #e6eef8;
+  --color-ok: #2e7d5b;
+  --color-warn: #a86b12;
   --color-serious: #b8521b;
-  --color-crit: #c92a2a;
+  --color-crit: #c2412d;
   --color-s-solar: #eda100;
   --color-s-demand: #2a78d6;
   --color-s-battery: #1baf7a;
-  --color-board: #d6ecf5;
-  --color-wire-ok: #1fa9bc;
-  --color-tile-a: #b9d2a6;
-  --color-tile-b: #aac894;
-  --color-tile-line: #9cbb86;
-  --color-slot: #e6dccb;
+  --color-board: #eef3f8;
+  --color-wire-ok: #1b8fb0;
+  --color-slot: #e7e4dc;
 }
 :root { color-scheme: dark; }
 
@@ -92,64 +77,43 @@ body {
   color: var(--color-ink);
   font-family: var(--font-sans);
   font-size: 14px;
+  line-height: 1.45;
   -webkit-font-smoothing: antialiased;
 }
 .num { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
-.pixel { font-family: var(--font-pixel); letter-spacing: 0.02em; }
+/* small label (replaces the old pixel font) */
+.pixel { font-family: var(--font-sans); font-weight: 500; letter-spacing: 0; }
 
-/* chunky panel: 3px outline + hard offset shadow */
-.chunk { background: var(--color-surface); border: 3px solid var(--color-ink0); box-shadow: 5px 5px 0 var(--color-ink0); border-radius: 6px; }
-.chunk-sm { border: 3px solid var(--color-ink0); box-shadow: 3px 3px 0 var(--color-ink0); border-radius: 5px; }
+/* cards and controls */
+.chunk { background: var(--color-surface); border: 1px solid var(--color-line); border-radius: 12px; box-shadow: 0 1px 2px rgb(0 0 0 / 0.04); }
+.chunk-sm { border: 1px solid var(--color-line); border-radius: 6px; }
 .btn {
-  border: 3px solid var(--color-ink0); box-shadow: 4px 4px 0 var(--color-ink0); border-radius: 6px;
-  transition: transform 60ms ease, box-shadow 60ms ease; font-weight: 700; letter-spacing: 0.04em;
+  border: 1px solid var(--color-line); border-radius: 8px; font-weight: 500;
+  transition: background-color 120ms ease, border-color 120ms ease, color 120ms ease;
 }
-.btn:hover:not(:disabled) { transform: translate(-1px, -1px); box-shadow: 5px 5px 0 var(--color-ink0); }
-.btn:active:not(:disabled) { transform: translate(3px, 3px); box-shadow: 1px 1px 0 var(--color-ink0); }
+.btn:hover:not(:disabled) { border-color: var(--color-line-strong); }
+.btn.bg-accent:hover:not(:disabled) { filter: brightness(1.08); }
 .btn:disabled { opacity: 0.45; cursor: not-allowed; }
 
 input[type="range"] { accent-color: var(--color-accent); }
 select, input[type="number"], input[type="text"], textarea {
-  background: var(--color-surface-2);
-  border: 2px solid var(--color-ink0);
+  background: var(--color-surface);
+  border: 1px solid var(--color-line);
   color: var(--color-ink);
-  border-radius: 4px;
-  padding: 3px 6px;
+  border-radius: 6px;
+  padding: 4px 8px;
 }
-select:focus, input:focus, textarea:focus, button:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; }
+select:focus, input:focus, textarea:focus, button:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 1px; }
 
-/* power-flow particles: dashes marching along the wire in the flow direction */
+/* power-flow particles */
 @keyframes flow { to { stroke-dashoffset: -32; } }
 .flow { animation: flow linear infinite; }
-@keyframes blink { 50% { opacity: 0.35; } }
-.blink { animation: blink 1.1s steps(2, jump-none) infinite; }
-@keyframes pop { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-.pop { animation: pop 160ms ease-out; transform-origin: center; }
+@keyframes blink { 50% { opacity: 0.4; } }
+.blink { animation: blink 1.4s ease-in-out infinite; }
+@keyframes rise { from { transform: translateY(6px); opacity: 0; } to { transform: none; opacity: 1; } }
+.pop { animation: rise 180ms ease-out; }
 
 @media (prefers-reduced-motion: reduce) {
   .flow, .blink, .pop { animation: none !important; }
   .btn { transition: none; }
 }
-
-/* ───────────── ATLAS: editorial "field report" style ─────────────
-   Paper, ink and hairline rules; one signal red; serif typography; no badges, no glow. */
-
-.atlas {
-  --a-paper: #f3eee3; --a-paper-2: #ebe4d5; --a-ink: #1e1c18; --a-ink-2: #4a463d; --a-ink-3: #7c766a;
-  --a-rule: #cdc4b2; --a-rule-2: #e2dac9; --a-red: #a3302a; --a-green: #2f6b45; --a-ochre: #9a6a10; --a-cable: #34322d;
-  background: var(--a-paper); color: var(--a-ink);
-  font-family: "Source Serif 4 Variable", Georgia, serif; font-size: 16px; line-height: 1.5;
-  min-height: 100vh;
-}
-:root[data-theme="dark"] .atlas {
-  --a-paper: #17181a; --a-paper-2: #1f2023; --a-ink: #ece6d8; --a-ink-2: #bdb6a6; --a-ink-3: #8a8475;
-  --a-rule: #3a3934; --a-rule-2: #26272a; --a-red: #e0685c; --a-green: #86b894; --a-ochre: #d8a444; --a-cable: #c9c2b2;
-}
-.atlas .display { font-family: "Fraunces Variable", Georgia, serif; font-variation-settings: "opsz" 144, "SOFT" 30; letter-spacing: -0.01em; }
-.atlas .smallcaps { font-variant-caps: all-small-caps; letter-spacing: 0.06em; }
-.atlas .fig { font-family: "IBM Plex Mono", ui-monospace, monospace; font-variant-numeric: tabular-nums; font-size: 0.92em; }
-.atlas a, .atlas .link { color: var(--a-ink); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; text-decoration-color: var(--a-rule); }
-.atlas .link:hover:not(:disabled), .atlas a:hover { text-decoration-color: var(--a-ink); }
-.atlas .link:disabled { color: var(--a-ink-3); cursor: default; }
-.atlas .rule { border-color: var(--a-rule); }
-.atlas button:focus-visible { outline: 1px solid var(--a-ink); outline-offset: 3px; }

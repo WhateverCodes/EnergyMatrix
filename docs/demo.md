@@ -4,15 +4,11 @@
 
 ## Fast demo on PLAY (≈ 2 minutes, best for projection)
 
-1. Open http://localhost:5173. NORMAL DAY loads: green wires, health bar HEALTHY 5/5, the operator log says "grid HEALTHY". Press ▶ to animate the day.
-2. **SOLAR SURGE**: lines 1-2/2-3 turn red with "112%" tags, the health bar drops to DANGER, and the log lists the overloads.
-3. **USE BATTERY** → *GRID STABILIZED*. Toggle BEFORE / AFTER to compare. Point out that INVERTER VOLTS is tagged NOT ENOUGH (reactive power can't fix a thermal overload).
-4. **EXTREME SUN** → **AUTO-FIX** → red *NO FEASIBLE SOLUTION*: 35.9 % curtailment would be needed vs the 20 % cap.
-5. Switch to **ENGINEER VIEW** for the full tables, forecasts and What-If.
-
-## ATLAS (≈ 1 minute, for the "how it reads" moment)
-
-Open **ATLAS** from the header (or /atlas). Choose *A solar surge*: the plan shows lines 1–2 and 2–3 in red with "112 %" lettered beside them, and the situation paragraph explains it in a sentence. Under *Remedies considered*, click *try it →* on "Store it in the battery" to get "Stabilised." with the recorded breaches list emptying. Toggle *Night print* / *Day print* to show both themes.
+1. Open http://localhost:5173. *Normal day* loads: teal energy lines, grid health *Healthy 5/5*, and the operator log says every limit was respected. Press ▶ to animate the day.
+2. **Solar surge**: lines 1-2 and 2-3 turn red with "112%" tags, health drops to *Danger*, and the log lists the overloads in plain words.
+3. **Use the battery** → *Grid stabilized*. Toggle Before / After to compare. Point out that *Inverter voltage control* is marked *Not enough* (reactive power can't fix a thermal overload).
+4. **Extreme sun** → **Auto-fix** → *No feasible solution*: 35.9 % curtailment would be needed against the 20 % cap.
+5. Switch to **Engineer view** for the full tables, forecasts and What-If.
 
 ## Click-by-click in ENGINEER VIEW (≈ 6 minutes)
 

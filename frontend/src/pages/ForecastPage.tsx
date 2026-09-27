@@ -8,10 +8,10 @@ import { ErrorBox, Section, Spinner, StatusBadge } from '../components/Status'
 import { fmt, pct } from '../utils/format'
 import type { Predictive } from '../types/api'
 
-const AX = { stroke: 'var(--color-line-strong)', tick: { fill: 'var(--color-ink-3)', fontSize: 10, fontFamily: 'JetBrains Mono' } }
+const AX = { stroke: 'var(--color-line-strong)', tick: { fill: 'var(--color-ink-3)', fontSize: 10, fontFamily: 'IBM Plex Mono' } }
 const TIP = {
   contentStyle: { background: 'var(--color-surface-2)', border: '1px solid var(--color-line-strong)', borderRadius: 2, fontSize: 11 },
-  itemStyle: { color: 'var(--color-ink)', fontFamily: 'JetBrains Mono', padding: 0 }, labelStyle: { color: 'var(--color-ink-2)' },
+  itemStyle: { color: 'var(--color-ink)', fontFamily: 'IBM Plex Mono', padding: 0 }, labelStyle: { color: 'var(--color-ink-2)' },
 }
 // Legend text stays in ink tokens; the swatch beside it carries the series colour.
 const LEG = { wrapperStyle: { fontSize: 11 }, iconSize: 10, formatter: (v: string) => <span style={{ color: 'var(--color-ink-2)' }}>{v}</span> }
@@ -195,7 +195,7 @@ function PredictivePanel() {
         </select>
         <span className="text-ink-3">demand error</span>
         <input type="number" aria-label="Demand error" className="w-16 num" min={-50} max={50} value={demErr} onChange={(e) => setDemErr(Number(e.target.value))} /><span className="text-ink-3">%</span>
-        <button onClick={run} disabled={m.isPending} className="inline-flex items-center gap-2 px-3 h-7 btn bg-accent text-ink0 disabled:opacity-40"><Play size={13} /> RUN PREDICTIVE</button>
+        <button onClick={run} disabled={m.isPending} className="inline-flex items-center gap-2 px-3 h-7 btn bg-accent text-on-accent border-transparent disabled:opacity-40"><Play size={13} /> Run predictive</button>
         {m.isPending && <Spinner label="forecasting, planning, replaying…" />}
       </div>
       {sel && source !== 'current' && <p className="px-3 py-2 text-[12px] text-ink-2 border-b border-line">{sel.description}</p>}

@@ -47,7 +47,7 @@ export function CandidateTable({ candidates, onApply, applying }: { candidates: 
                   {onApply && c.available && c.key !== 'none' && (
                     <button onClick={() => onApply(c.key)} disabled={!!applying}
                       className={`px-2 h-6 text-[11px] border ${c.recommended ? 'border-accent text-accent-ink' : 'border-line-strong text-ink-2'} disabled:opacity-40`}>
-                      {applying === c.key ? '…' : 'APPLY'}
+                      {applying === c.key ? '…' : 'Apply'}
                     </button>
                   )}
                 </td>
