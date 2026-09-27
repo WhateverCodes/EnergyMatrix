@@ -12,8 +12,8 @@ Resume protocol: read this file and `docs/PROJECT_BRIEF.md`, continue from the f
 | 5 | Actions A1–A5, evaluator, objective, infeasibility, explanations | per-action tests; baseline immutability | DONE |
 | 6 | Scenario library S1–S8 | acceptance tests for all outcome classes | S1–S6 DONE; S7/S8 in phase 10 |
 | 7 | FastAPI endpoints, SQLite, error handling | integration tests S2 + S6 | DONE |
-| 8 | Frontend: Builder, Grid Twin, Heal & Verify | P0 path; component tests | |
-| 9 | Live Lab sliders + debounce | snapshot latency logged | |
+| 8 | Frontend: Builder, Grid Twin, Heal & Verify | P0 path; component tests | DONE |
+| 9 | Live Lab sliders + debounce | snapshot latency logged | DONE |
 | 10 | Forecast backtest + predictive + S7/S8 UI | honest metrics; S7 PLAN_FAILED_ON_ACTUALS | |
 | 11 | What-If parser, history/compare, hosting view, upload UI | parser tests (10+ phrasings) | |
 | 12 | Polish, demo_check.py, docs, README | `make demo-check` passes | |
@@ -45,3 +45,9 @@ simulation/scenarios/S1..S8.json with rationale relative to calibration threshol
 
 ### Phase 7 — done
 api/core.py (config, networks, datasets + upload, load profiles, scenario build, library), api/simulate.py (run, snapshot + latency, actions evaluate/apply, hosting capacity, history save/list/get/compare), db/models.py (5 tables), global error contract, lifespan warm-up. 59 backend tests pass (~47 s).
+
+### Phase 8 — done
+Frontend: Shell + data-honesty strip, Scenario Builder (library dropdown, 3 columns, backend summary bar), Grid Twin (SVG single-line diagram from CIGRE geodata, scrubber/play, inspector, 4 charts, violation list), Heal & Verify (candidate table, weight sliders re-rank via backend cache, APPLY → before/after with two diagrams, infeasible panel, save). Vitest: comparison table, infeasible panel, debounce (4 tests). P0 path verified headless in Chrome (playwright-core, scratchpad script): Builder S1 → Run → Grid → Live Lab PV 300% → violation → full evaluation → apply → S6 NO FEASIBLE (35.9% vs 20% cap) → saved; zero console errors.
+
+### Phase 9 — done
+Live Lab: 7 sliders (PV %, demand %, consumer scale, battery available, SOC, curtailment cap, v_max) + time step, 350 ms debounce, 12 KPIs, live violations, diagram, follow-up heal preview. Snapshot latency (no preview) ≈ 40–100 ms warm, logged per request and at GET /api/simulate/latency.

@@ -207,6 +207,7 @@ def scenario_summary(inp: ScenarioInputs) -> dict:
         "net_surplus_mw": (gen - dem).round(4).tolist(),
         "net_surplus_feeder_mw": (gen - dem_feeder).round(4).tolist(),
         "installed_pv_mw": round(float(inp.pv_rating_mw.sum()), 4),
+        "peak_net_surplus_feeder_mw": round(float((gen - dem_feeder).max()), 4),
         "energy": {
             "generation_mwh": round(float(gen.sum() * STEP_MINUTES / 60), 4),
             "demand_mwh": round(float(dem.sum() * STEP_MINUTES / 60), 4),

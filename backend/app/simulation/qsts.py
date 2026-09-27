@@ -137,6 +137,7 @@ class StepRecord:
     losses_mw: float
     ext_grid_p: float
     load_mw: float
+    feeder_load_mw: float  # excludes the aggregated substation loads at the transformer LV buses
     pv_avail_mw: float
     pv_dispatched_mw: float
     curtailed_mw: float
@@ -187,6 +188,8 @@ def run_qsts(inp: ScenarioInputs, levers: list[Lever] | None = None, soc_init: f
     records: list[StepRecord] = []
     per_step: list[list[StepViolation]] = []
     total_pf = 0
+    lv_buses = set(net.trafo["lv_bus"].astype(int))
+    feeder_mask = ~np.isin(net.load.loc[inp.load_idx, "bus"].to_numpy(), list(lv_buses))
     for k in range(inp.n_steps):
         net.load.loc[inp.load_idx, "p_mw"] = inp.load_p[k]
         net.load.loc[inp.load_idx, "q_mvar"] = inp.load_q[k]
@@ -226,6 +229,7 @@ def run_qsts(inp: ScenarioInputs, levers: list[Lever] | None = None, soc_init: f
             max_trafo=round(float(pf.trafo_loading.max()), 3) if pf.converged else None,
             losses_mw=_nanround(pf.losses_mw, 5), ext_grid_p=_nanround(pf.ext_grid_p, 4),
             load_mw=round(float(inp.load_p[k].sum()), 4),
+            feeder_load_mw=round(float(inp.load_p[k][feeder_mask].sum()), 4),
             pv_avail_mw=round(pv_avail, 5), pv_dispatched_mw=round(pv_disp, 5),
             curtailed_mw=round(pv_avail - pv_disp, 5), curtail_pct=round(100.0 * ctrl.curtail_frac, 3),
             required_curtail_pct=None if ctrl.required_curtail_frac is None else round(100.0 * ctrl.required_curtail_frac, 3),

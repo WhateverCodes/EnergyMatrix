@@ -30,6 +30,7 @@ class SnapshotRequest(BaseModel):
     soc_pct: Optional[float] = Field(None, ge=0, le=100)
     curtailment_cap_pct: Optional[float] = Field(None, ge=0, le=100)
     v_max: Optional[float] = Field(None, ge=1.0, le=1.2)
+    include_preview: bool = Field(False, description="Also run the single-step heal preview (slower, ~0.5 s)")
 
 
 class SaveScenarioRequest(BaseModel):

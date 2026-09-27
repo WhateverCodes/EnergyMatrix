@@ -17,7 +17,7 @@ from app.optimization.evaluator import cached_entry, clone_inputs, config_key, e
 from app.schemas.requests import ApplyRequest, EvaluateRequest, SaveScenarioRequest, SnapshotRequest
 from app.schemas.scenario import ScenarioConfig
 from app.simulation.hosting_capacity import hosting_capacity
-from app.simulation.mapping import build_inputs, scenario_summary
+from app.simulation.mapping import build_inputs, generation_profile, scenario_summary, window_timestamps
 from app.simulation.metrics import compute_metrics
 from app.simulation.network_factory import network_summary
 from app.simulation.qsts import run_qsts
@@ -70,22 +70,24 @@ def simulate_snapshot(req: SnapshotRequest) -> dict:
         cfg.constraints.max_curtailment_pct = req.curtailment_cap_pct
     if req.v_max is not None:
         cfg.constraints.v_max = req.v_max
-    full = build_inputs(cfg.model_copy(update={}))
+    ts = window_timestamps(cfg.date, cfg.start, cfg.end)
+    labels = [x.strftime("%H:%M") for x in ts]
     if req.time is None:
-        t = full.labels[int(np.argmax(full.pv_avail.sum(axis=1)))]
-    elif req.time in full.labels:
+        gen_pu, _ = generation_profile(cfg, ts)  # default step = max-PV step of the window
+        t = labels[int(np.argmax(gen_pu))]
+    elif req.time in labels:
         t = req.time
     else:
-        raise ApiError("BAD_TIME", f"time {req.time} is not a step of the window", details={"steps": full.labels})
-    one = cfg.model_copy(update={"start": t, "end": t})
-    inp = build_inputs(one)
-    base = run_qsts(clone_inputs(inp))
+        raise ApiError("BAD_TIME", f"time {req.time} is not a step of the window", details={"steps": labels})
+    inp = build_inputs(cfg.model_copy(update={"start": t, "end": t}))  # private net copy
+    base = run_qsts(inp)
     rec = base.records[0]
     m = compute_metrics(base)
     preview = None
-    if rec.status != "SAFE":
+    if req.include_preview and rec.status != "SAFE":
         # Single-step heal preview (battery first, curtail residual) — the full evaluation verifies the window.
-        heal = run_qsts(clone_inputs(inp), [BatteryLever(), CurtailmentLever()])
+        # run_qsts resets every injection at the start of the step, so the same private net can be reused.
+        heal = run_qsts(inp, [BatteryLever(), CurtailmentLever()])
         h = heal.records[0]
         preview = {
             "status": h.status, "battery_p_mw": h.battery_p_mw, "curtail_pct": h.curtail_pct,
@@ -93,11 +95,12 @@ def simulate_snapshot(req: SnapshotRequest) -> dict:
             "notes": h.notes, "label": "single-step preview (battery then capped curtailment) — run full evaluation to verify the window",
         }
     elapsed = (time.perf_counter() - t0) * 1000.0
-    SNAPSHOT_LATENCIES_MS.append(elapsed)
+    if not req.include_preview:
+        SNAPSHOT_LATENCIES_MS.append(elapsed)  # slider path latency (target < 150 ms)
     log.info("snapshot %.1f ms (status %s)", elapsed, rec.status)
     head = [rec.line_p_from[k] for k in base.head_line_pos] if rec.line_p_from else []
     return clean({
-        "time": t, "steps": full.labels, "status": rec.status, "step": dataclasses.asdict(rec),
+        "time": t, "steps": labels, "status": rec.status, "step": dataclasses.asdict(rec),
         "kpis": {
             "max_v": rec.max_v, "min_v": rec.min_v, "max_line_pct": rec.max_line, "max_trafo_pct": rec.max_trafo,
             "losses_mw": rec.losses_mw, "losses_pct": m["losses_pct"], "pv_available_mw": rec.pv_avail_mw,

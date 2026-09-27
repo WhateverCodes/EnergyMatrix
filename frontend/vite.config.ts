@@ -7,7 +7,7 @@ export default defineConfig({
   plugins: [react(), tailwindcss()],
   server: {
     port: 5173,
-    proxy: { '/api': 'http://localhost:8000' },
+    proxy: { '/api': process.env.GRIDTWIN_API ?? 'http://localhost:8000' },
   },
   test: {
     environment: 'jsdom',

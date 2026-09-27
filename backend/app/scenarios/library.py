@@ -24,18 +24,20 @@ def _load_all() -> dict[str, dict]:
     return out
 
 
+def _normalized(d: dict) -> dict:
+    """Scenario with its config expanded to a full ScenarioConfig (all defaults filled in)."""
+    return {**d, "config": ScenarioConfig.model_validate(d["config"]).model_dump()}
+
+
 def list_scenarios() -> list[dict]:
-    return [
-        {k: v for k, v in d.items() if k != "config"} | {"config": d["config"]}
-        for d in sorted(_load_all().values(), key=lambda d: int(d["id"][1:]))
-    ]
+    return [_normalized(d) for d in sorted(_load_all().values(), key=lambda d: int(d["id"][1:]))]
 
 
 def get_scenario(sid: str) -> dict:
     d = _load_all().get(sid.upper())
     if d is None:
         raise ApiError("SCENARIO_NOT_FOUND", f"Unknown scenario '{sid}'", 404, {"available": sorted(_load_all())})
-    return d
+    return _normalized(d)
 
 
 def scenario_config(sid: str) -> ScenarioConfig:

@@ -41,3 +41,8 @@
 - Hosting capacity exposed as GET /api/hosting-capacity?network&date&start&end&pv_multiplier and POST (full ScenarioConfig).
 - Saving a scenario (POST /api/history) evaluates (cache hit when already evaluated) and stores baseline + selected (default: recommended) intervention + final metrics + feasibility status.
 - Tests use a temp SQLite DB via GRIDTWIN_DB (tests/conftest.py).
+- Frontend is dark-only (control-room aesthetic per brief). Chart series colours validated with the dataviz palette validator (dark, surface #11161c): solar #c98500, demand #3987e5, battery #199e70, alt #d95926; status colours reserved and always paired with icon + label.
+- Live Lab snapshot split: slider requests skip the heal preview (≈40–100 ms); a follow-up request with include_preview=true fetches the single-step preview (≈0.5 s) only when the step is violated.
+- Generation-vs-demand charts plot FEEDER demand (excludes the ~20 MW aggregated substation loads at buses 1/12, which would flatten the PV curve); step records carry feeder_load_mw from the backend.
+- Library configs are returned normalized to full ScenarioConfig by the backend so the frontend never hard-codes model defaults.
+- Vite proxy target configurable via GRIDTWIN_API (port 8000 may be taken by another local process).

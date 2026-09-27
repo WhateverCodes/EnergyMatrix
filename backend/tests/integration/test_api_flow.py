@@ -83,7 +83,9 @@ def test_snapshot_live_lab(client):
     r = client.post("/api/simulate/snapshot", json={"config": cfg}).json()
     assert r["status"] == "SAFE" and r["preview"] is None
     hot = client.post("/api/simulate/snapshot", json={"config": cfg, "pv_pct": 300}).json()
-    assert hot["status"] == "VIOLATION" and hot["preview"] is not None
+    assert hot["status"] == "VIOLATION" and hot["preview"] is None
+    prev = client.post("/api/simulate/snapshot", json={"config": cfg, "pv_pct": 300, "include_preview": True}).json()
+    assert prev["preview"] is not None and prev["preview"]["curtail_pct"] <= 20.0
     assert hot["kpis"]["max_v"] > r["kpis"]["max_v"]
     bad = client.post("/api/simulate/snapshot", json={"config": cfg, "time": "03:00"})
     assert bad.json()["error_code"] == "BAD_TIME"
