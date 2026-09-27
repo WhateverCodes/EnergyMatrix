@@ -55,7 +55,7 @@ class ScenarioInputs:
     pv_idx: list[int]
     pv_rating_mw: np.ndarray
     pv_s_mva: np.ndarray
-    pv_avail: np.ndarray  # steps x n_pv, MW (actual, incl. cloud event)
+    pv_avail: np.ndarray  # steps x n_pv, MW (actual incl. cloud event, or forecast when overridden)
     load_idx: list[int]
     load_p: np.ndarray  # steps x n_load, MW
     load_q: np.ndarray
@@ -120,8 +120,11 @@ def build_inputs(cfg: ScenarioConfig, gen_pu_override: np.ndarray | None = None)
                        details={"available": sorted(profiles.PROFILES)})
     ts = window_timestamps(cfg.date, cfg.start, cfg.end)
     gen_pu, ds_meta = generation_profile(cfg, ts)
-    if gen_pu_override is not None:
-        gen_pu = np.asarray(gen_pu_override, dtype=float)
+    override = gen_pu_override if gen_pu_override is not None else cfg.gen_pu_override
+    if override is not None:
+        if len(override) != len(ts):
+            raise ApiError("BAD_OVERRIDE", f"gen_pu_override has {len(override)} values for {len(ts)} steps")
+        gen_pu = np.asarray(override, dtype=float)
 
     net = new_net()
     n_bus = len(net.bus)
@@ -183,6 +186,7 @@ def build_inputs(cfg: ScenarioConfig, gen_pu_override: np.ndarray | None = None)
         "network": "BENCHMARK FEEDER · CIGRE MV",
         "results": "SIMULATED RESULTS",
         "cloud_event": "SYNTHETIC cloud event applied to actuals" if cfg.cloud_event else None,
+        "forecast": cfg.gen_label,
     }
     return ScenarioInputs(
         config=cfg, timestamps=ts, labels=[t.strftime("%H:%M") for t in ts], net=net,

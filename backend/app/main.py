@@ -10,7 +10,7 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
-from app.api import core, simulate
+from app.api import core, forecast, simulate
 from app.datasets.registry import all_datasets
 from app.db.models import init_db
 from app.errors import ApiError
@@ -61,3 +61,4 @@ def health() -> dict:
 
 app.include_router(core.router)
 app.include_router(simulate.router)
+app.include_router(forecast.router)

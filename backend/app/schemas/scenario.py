@@ -50,6 +50,9 @@ class ScenarioConfig(BaseModel):
     lines_out_of_service: list[int] = []
     constraints: Constraints = Constraints()
     weights: ObjectiveWeights = ObjectiveWeights()
+    # Set by predictive mode: per-step generation_pu FORECAST replacing the dataset values for the window.
+    gen_pu_override: Optional[list[float]] = None
+    gen_label: Optional[str] = None
 
     @field_validator("start", "end")
     @classmethod

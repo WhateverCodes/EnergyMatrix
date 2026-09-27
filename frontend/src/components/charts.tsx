@@ -11,7 +11,8 @@ const TIP = {
   labelStyle: { color: 'var(--color-ink-2)' }, itemStyle: { color: 'var(--color-ink)', fontFamily: 'JetBrains Mono', padding: 0 },
   cursor: { stroke: 'var(--color-ink-3)', strokeWidth: 1 },
 }
-const LEG = { wrapperStyle: { fontSize: 11, color: 'var(--color-ink-2)' }, iconSize: 10 }
+// Legend text stays in ink tokens; the swatch beside it carries the series colour.
+const LEG = { wrapperStyle: { fontSize: 11 }, iconSize: 10, formatter: (v: string) => <span style={{ color: 'var(--color-ink-2)' }}>{v}</span> }
 const numFmt = (nd: number) => (v: unknown) => (typeof v === 'number' ? v.toFixed(nd) : String(v))
 
 export function GenDemandChart({ steps, height = 190, cursor }: { steps: StepRecord[]; height?: number; cursor?: string }) {

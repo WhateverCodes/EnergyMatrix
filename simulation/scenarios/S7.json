@@ -3,8 +3,8 @@
   "title": "Cloud event: plan made on forecast, replayed on actuals",
   "expected_outcome": "PLAN_FAILED_ON_ACTUALS",
   "mode": "predictive",
-  "description": "At 11:30, during a passing cloud, the forecaster sees depressed recent output and plans for low PV. When the cloud clears, actual PV returns to full and the forecast-based plan fails on actuals.",
-  "parameter_rationale": "pv_multiplier near battery_alone_limit; cloud before planning time",
+  "description": "At 11:30, just after a passing cloud (10:30–11:45), the HistGradientBoosting forecaster sees depressed recent output: its P50 predicts a safe feeder, so the P50-based plan is 'no action'. When the cloud clears, actual PV returns to full and the frozen plan fails on actuals. The P90 forecast did flag the risk.",
+  "parameter_rationale": "pv_multiplier 48: above first_violation_mult (42) so clear-sky actuals violate; cloud ends before the horizon; model hgb trained leave-one-day-out",
   "config": {
     "name": "S7 Cloud event",
     "date": "2020-05-25",
@@ -27,7 +27,7 @@
   "predictive": {
     "t0": "11:30",
     "horizon_steps": 8,
-    "model": "persistence_last",
+    "model": "hgb",
     "plan_on": "p50"
   },
   "provenance": "simulation/calibration.json thresholds (clear day 2020-05-25, window 10:00-15:00)"

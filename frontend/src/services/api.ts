@@ -1,6 +1,6 @@
 import type {
   ApplyResult, DatasetMeta, Evaluation, HostingCapacity, LibraryScenario, LoadProfile, NetworkSummary, RunResult,
-  SavedScenario, ScenarioConfig, ScenarioSummary, Snapshot, Weights, Constraints,
+  SavedScenario, ScenarioConfig, ScenarioSummary, Snapshot, Weights, Constraints, Backtest, Predictive,
 } from '../types/api'
 
 export class ApiError extends Error {
@@ -46,6 +46,8 @@ export const api = {
     post<SavedScenario & { explanation: string }>('/api/history', { name, config: c, selected_intervention: selected ?? null }),
   history: () => req<SavedScenario[]>('/api/history'),
   compare: (a: number, b: number) => req<{ a: SavedScenario; b: SavedScenario; rows: { metric: string; a: number | null; b: number | null }[] }>(`/api/history/compare?a=${a}&b=${b}`),
+  backtest: (horizon: number, date?: string) => req<Backtest>(`/api/forecast/backtest?horizon=${horizon}${date ? `&date=${date}` : ''}`),
+  predictive: (body: Record<string, unknown>) => post<Predictive>('/api/forecast/predictive', body),
   hosting: (c: ScenarioConfig) => post<HostingCapacity>('/api/hosting-capacity', c),
   upload: async (form: FormData) => {
     let r: Response

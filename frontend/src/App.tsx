@@ -6,6 +6,7 @@ import BuilderPage from './pages/BuilderPage'
 import GridPage from './pages/GridPage'
 import ActionsPage from './pages/ActionsPage'
 import LabPage from './pages/LabPage'
+import ForecastPage from './pages/ForecastPage'
 
 const qc = new QueryClient({ defaultOptions: { queries: { refetchOnWindowFocus: false, staleTime: 60_000 } } })
 
@@ -20,6 +21,7 @@ export default function App() {
               <Route path="grid" element={<GridPage />} />
               <Route path="lab" element={<LabPage />} />
               <Route path="actions" element={<ActionsPage />} />
+              <Route path="forecast" element={<ForecastPage />} />
             </Route>
           </Routes>
         </BrowserRouter>

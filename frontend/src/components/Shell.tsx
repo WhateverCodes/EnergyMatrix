@@ -9,6 +9,7 @@ const NAV = [
   ['/grid', 'Grid Twin'],
   ['/lab', 'Live Lab'],
   ['/actions', 'Heal & Verify'],
+  ['/forecast', 'Forecast & Predict'],
 ] as const
 
 export function HonestyStrip() {

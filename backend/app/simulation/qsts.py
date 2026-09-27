@@ -144,6 +144,7 @@ class StepRecord:
     curtail_pct: float
     required_curtail_pct: float | None
     pv_q_mvar: float
+    pv_q_each: list[float]  # per PV sgen (for replaying a plan)
     battery_p_mw: float
     soc_pct: float | None
     violations: list[dict]
@@ -234,6 +235,7 @@ def run_qsts(inp: ScenarioInputs, levers: list[Lever] | None = None, soc_init: f
             curtailed_mw=round(pv_avail - pv_disp, 5), curtail_pct=round(100.0 * ctrl.curtail_frac, 3),
             required_curtail_pct=None if ctrl.required_curtail_frac is None else round(100.0 * ctrl.required_curtail_frac, 3),
             pv_q_mvar=round(float(np.sum(ctrl.pv_q_effective)) if ctrl.pv_q_effective is not None else 0.0, 5),
+            pv_q_each=[round(float(x), 6) for x in ctrl.pv_q_effective] if ctrl.pv_q_effective is not None else [],
             battery_p_mw=round(ctrl.battery_p_mw, 5),
             soc_pct=None if soc_after is None else round(100.0 * soc_after, 3),
             violations=[v.__dict__ for v in vs], notes=list(ctrl.notes), levers_used=list(ctrl.lever_log),

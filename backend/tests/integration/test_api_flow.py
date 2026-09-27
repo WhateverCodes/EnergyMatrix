@@ -96,3 +96,13 @@ def test_snapshot_live_lab(client):
 def test_hosting_capacity(client):
     r = client.get("/api/hosting-capacity", params={"pv_multiplier": 20}).json()
     assert len(r["buses"]) == 14 and r["worst_case"]["max_pv_step"]
+
+
+def test_forecast_endpoints(client):
+    bt = client.get("/api/forecast/backtest", params={"horizon": 4}).json()
+    assert set(bt["metrics"]) == {"persistence_day", "persistence_last", "rolling_mean", "hgb"}
+    assert "ML" in bt["verdict"] and len(bt["series"]["actual"]) == len(bt["series"]["hgb_p90"])
+    s7 = client.post("/api/forecast/predictive", json={"scenario_id": "S7"}).json()
+    assert s7["outcome"] == "PLAN_FAILED_ON_ACTUALS"
+    bad = client.post("/api/forecast/predictive", json={"scenario_id": "S7", "model": "gpt"})
+    assert bad.json()["error_code"] == "UNKNOWN_MODEL"

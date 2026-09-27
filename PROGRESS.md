@@ -10,11 +10,11 @@ Resume protocol: read this file and `docs/PROJECT_BRIEF.md`, continue from the f
 | 3 | QSTS engine with SOC coupling, metrics | SOC limits + efficiency tests | DONE |
 | 4 | Calibration script, hosting capacity | calibration.json produced + documented | DONE |
 | 5 | Actions A1–A5, evaluator, objective, infeasibility, explanations | per-action tests; baseline immutability | DONE |
-| 6 | Scenario library S1–S8 | acceptance tests for all outcome classes | S1–S6 DONE; S7/S8 in phase 10 |
+| 6 | Scenario library S1–S8 | acceptance tests for all outcome classes | DONE (S7/S8 added in phase 10) |
 | 7 | FastAPI endpoints, SQLite, error handling | integration tests S2 + S6 | DONE |
 | 8 | Frontend: Builder, Grid Twin, Heal & Verify | P0 path; component tests | DONE |
 | 9 | Live Lab sliders + debounce | snapshot latency logged | DONE |
-| 10 | Forecast backtest + predictive + S7/S8 UI | honest metrics; S7 PLAN_FAILED_ON_ACTUALS | |
+| 10 | Forecast backtest + predictive + S7/S8 UI | honest metrics; S7 PLAN_FAILED_ON_ACTUALS | DONE |
 | 11 | What-If parser, history/compare, hosting view, upload UI | parser tests (10+ phrasings) | |
 | 12 | Polish, demo_check.py, docs, README | `make demo-check` passes | |
 
@@ -51,3 +51,6 @@ Frontend: Shell + data-honesty strip, Scenario Builder (library dropdown, 3 colu
 
 ### Phase 9 — done
 Live Lab: 7 sliders (PV %, demand %, consumer scale, battery available, SOC, curtailment cap, v_max) + time step, 350 ms debounce, 12 KPIs, live violations, diagram, follow-up heal preview. Snapshot latency (no preview) ≈ 40–100 ms warm, logged per request and at GET /api/simulate/latency.
+
+### Phase 10 — done
+forecasting/ features (direct multi-horizon), models (3 baselines + HGB quantile P10/P50/P90), backtest (time-ordered, daylight-only MAE/RMSE/nMAE/coverage; ML beats baseline 0.093 vs 0.126 pu), predictive (forecast → QSTS on P50/P90 → evaluate → frozen plan → replay on actuals). API: GET /api/forecast/backtest, POST /api/forecast/predictive. Frontend Forecast & Predict page. Acceptance S7 (PLAN_FAILED_ON_ACTUALS) + S8 (P50 SAFE / P90 VIOLATION) pass; forecasting unit tests pass.

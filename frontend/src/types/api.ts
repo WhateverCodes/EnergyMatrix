@@ -127,3 +127,21 @@ export interface HostingCapacity {
   method: string
   buses: { bus: number; name: string; hosting_mw: number; binding: string | null; binding_element: string | null; note: string | null }[]
 }
+
+export interface ModelMetrics { mae: number | null; rmse: number | null; nmae_pct: number | null; n: number; by_horizon: Record<string, number | null>; p10_p90_coverage_pct?: number }
+export interface Backtest {
+  dataset_id: string; dataset: { id: string; name: string; is_real: boolean; label: string }
+  split: { train_until: string; method: string; train_samples: number; test_daylight_samples: number }
+  horizons_steps: number[]; metrics: Record<string, ModelMetrics>; best_baseline: string; ml_beats_best_baseline: boolean
+  verdict: string; notes: string[]
+  series: { date: string; horizon_steps: number; available_dates: string[]; timestamps: string[]; actual: number[]
+    persistence_day: number[]; persistence_last: number[]; hgb: number[]; hgb_p10: number[]; hgb_p90: number[] }
+}
+export interface Predictive {
+  t0: string; horizon_labels: string[]; model: string; plan_on: string; demand_forecast: string; model_training: string
+  forecast: { p10: number[]; p50: number[]; p90: number[] }; actual_pu: number[]; history: { labels: string[]; pu: number[] }
+  predicted: Record<'p50' | 'p90', { status: string; violating_steps: string[] }>
+  plan: { candidate: string; planning_status: string; explanation: string; battery_p_mw: number[]; curtail_pct: number[] }
+  replay: { outcome: string; failing_steps: string[]; steps: { label: string; status: string; max_v: number | null; max_line: number | null; battery_p_mw: number; curtail_pct: number }[] }
+  outcome: string; why: string | null; honesty: Honesty & { forecast: string }
+}

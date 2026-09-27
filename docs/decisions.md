@@ -46,3 +46,9 @@
 - Generation-vs-demand charts plot FEEDER demand (excludes the ~20 MW aggregated substation loads at buses 1/12, which would flatten the PV curve); step records carry feeder_load_mw from the backend.
 - Library configs are returned normalized to full ScenarioConfig by the backend so the frontend never hard-codes model defaults.
 - Vite proxy target configurable via GRIDTWIN_API (port 8000 may be taken by another local process).
+- Forecasting uses the DIRECT multi-horizon strategy: one sample per (issue time t, horizon h ≤ 8); lags 1/2/4 relative to t and the 96-step lag relative to the target — avoids recursive error build-up.
+- Backtest split: first 70 % of days train (until 2020-06-07), rest test; metrics on daylight targets only. Result: HGB P50 MAE 0.093 pu vs best baseline (same time yesterday) 0.126 pu; P10–P90 coverage 78 % (nominal 80 %).
+- Predictive mode trains HGB leave-one-day-out (all days except the scenario date) so the scenario day is never seen in training.
+- Forecast scenarios reuse the whole evaluator through ScenarioConfig.gen_pu_override (+ gen_label for honesty labelling).
+- Plan replay freezes switch states + per-step battery MW, curtailment fraction and per-inverter Q (StepRecord.pv_q_each) and applies them with no corrective levers.
+- S7 uses HGB (not naive persistence): P50 says SAFE, P90 flags risk, P50 plan fails on actuals when the cloud clears. S8 multiplier set to 43 (P50 peak×43 below violation point, P90 peak×43 above).
