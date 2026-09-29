@@ -1,0 +1,119 @@
+@import "tailwindcss";
+@import "@fontsource/ibm-plex-sans/400.css";
+@import "@fontsource/ibm-plex-sans/500.css";
+@import "@fontsource/ibm-plex-sans/600.css";
+@import "@fontsource/ibm-plex-mono/400.css";
+@import "@fontsource/ibm-plex-mono/500.css";
+
+/* Calm, technical design system: warm neutral canvas, one blueprint-blue accent, thin borders,
+   soft cards, sentence case. Status is never colour-only (text + dot/icon). Chart series colours are
+   the palette validated with the dataviz validator for both themes. */
+@theme {
+  --font-sans: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+
+  /* dark (default) */
+  --color-ink0: #0e1116;
+  --color-bg: #111418;
+  --color-surface: #171b20;
+  --color-surface-2: #1d2228;
+  --color-line: #2a3037;
+  --color-line-strong: #353c45;
+  --color-ink: #eceae4;
+  --color-ink-2: #b7b3a9;
+  --color-ink-3: #827e75;
+  --color-accent: #7aa7e6;
+  --color-accent-ink: #9cc0f2;
+  --color-on-accent: #0b1726;
+  --color-accent-dim: #1d2d44;
+
+  --color-ok: #6cc49a;
+  --color-warn: #e2b45c;
+  --color-serious: #ec9a6a;
+  --color-crit: #ef7a66;
+  --color-tower: #9d8cd6;
+  --color-roof: #e8a87c;
+  --color-batt: #7fd1e8;
+
+  --color-s-solar: #c98500;
+  --color-s-demand: #3987e5;
+  --color-s-battery: #199e70;
+
+  --color-board: #0c1a2b;
+  --color-wire-ok: #4fc3d9;
+  --color-slot: #2a3037;
+}
+
+:root[data-theme="light"] {
+  color-scheme: light;
+  --color-bg: #f5f4f0;
+  --color-surface: #ffffff;
+  --color-surface-2: #f8f7f4;
+  --color-line: #e4e1d8;
+  --color-line-strong: #d3cfc3;
+  --color-ink: #1c1b19;
+  --color-ink-2: #55524a;
+  --color-ink-3: #8a867b;
+  --color-accent: #1f5fa8;
+  --color-accent-ink: #1f5fa8;
+  --color-on-accent: #ffffff;
+  --color-accent-dim: #e6eef8;
+  --color-ok: #2e7d5b;
+  --color-warn: #a86b12;
+  --color-serious: #b8521b;
+  --color-crit: #c2412d;
+  --color-s-solar: #eda100;
+  --color-s-demand: #2a78d6;
+  --color-s-battery: #1baf7a;
+  --color-board: #eef3f8;
+  --color-wire-ok: #1b8fb0;
+  --color-slot: #e7e4dc;
+}
+:root { color-scheme: dark; }
+
+html, body, #root { height: 100%; }
+body {
+  background: var(--color-bg);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  font-size: 14px;
+  line-height: 1.45;
+  -webkit-font-smoothing: antialiased;
+}
+.num { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+/* small label (replaces the old pixel font) */
+.pixel { font-family: var(--font-sans); font-weight: 500; letter-spacing: 0; }
+
+/* cards and controls */
+.chunk { background: var(--color-surface); border: 1px solid var(--color-line); border-radius: 12px; box-shadow: 0 1px 2px rgb(0 0 0 / 0.04); }
+.chunk-sm { border: 1px solid var(--color-line); border-radius: 6px; }
+.btn {
+  border: 1px solid var(--color-line); border-radius: 8px; font-weight: 500;
+  transition: background-color 120ms ease, border-color 120ms ease, color 120ms ease;
+}
+.btn:hover:not(:disabled) { border-color: var(--color-line-strong); }
+.btn.bg-accent:hover:not(:disabled) { filter: brightness(1.08); }
+.btn:disabled { opacity: 0.45; cursor: not-allowed; }
+
+input[type="range"] { accent-color: var(--color-accent); }
+select, input[type="number"], input[type="text"], textarea {
+  background: var(--color-surface);
+  border: 1px solid var(--color-line);
+  color: var(--color-ink);
+  border-radius: 6px;
+  padding: 4px 8px;
+}
+select:focus, input:focus, textarea:focus, button:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 1px; }
+
+/* power-flow particles */
+@keyframes flow { to { stroke-dashoffset: -32; } }
+.flow { animation: flow linear infinite; }
+@keyframes blink { 50% { opacity: 0.4; } }
+.blink { animation: blink 1.4s ease-in-out infinite; }
+@keyframes rise { from { transform: translateY(6px); opacity: 0; } to { transform: none; opacity: 1; } }
+.pop { animation: rise 180ms ease-out; }
+
+@media (prefers-reduced-motion: reduce) {
+  .flow, .blink, .pop { animation: none !important; }
+  .btn { transition: none; }
+}
