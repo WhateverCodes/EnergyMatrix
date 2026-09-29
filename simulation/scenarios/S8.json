@@ -1,0 +1,29 @@
+{
+  "id": "S8",
+  "title": "Plan safe on P50, violates on P90",
+  "expected_outcome": "P50_SAFE_P90_VIOLATION",
+  "mode": "predictive",
+  "description": "PV just above the violation threshold on a clear day. At 11:00 the median (P50) forecast predicts no problem, the 90th-percentile (P90) forecast predicts overloads. A plan made on P50 fails on actuals; robust planning should use the upper quantile (and even P90 is exceeded at some steps — coverage is ~78%).",
+  "parameter_rationale": "pv_multiplier 43: P50 forecast peak (~0.91 pu) x 43 stays below the violation point (~41 pu-multiplier units), P90 peak (~0.985 pu) x 43 exceeds it — between first_violation_mult (42) and 45",
+  "config": {
+    "name": "S8 P50 vs P90",
+    "date": "2020-05-25",
+    "start": "10:00",
+    "end": "15:00",
+    "pv_multiplier": 43,
+    "consumer_profile": "residential_society",
+    "target_bus": 11,
+    "battery": {
+      "enabled": true,
+      "bus": 11,
+      "soc_init_pct": 50
+    }
+  },
+  "predictive": {
+    "t0": "11:00",
+    "horizon_steps": 8,
+    "model": "hgb",
+    "plan_on": "p50"
+  },
+  "provenance": "simulation/calibration.json thresholds (clear day 2020-05-25, window 10:00-15:00)"
+}

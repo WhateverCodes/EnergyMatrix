@@ -1,0 +1,25 @@
+{
+  "id": "S2",
+  "title": "Solar surge, battery available",
+  "expected_outcome": "VIOLATION_FEASIBLE_BATTERY",
+  "description": "PV raised just past the first-violation threshold. Line 1-2/2-3 overload around noon; a 2 MW / 4 MWh battery starting at 20% SOC absorbs the surplus with no curtailment.",
+  "parameter_rationale": "pv_multiplier 44: between first_violation_mult (42) and battery_alone_limit_mult (46)",
+  "config": {
+    "name": "S2 Solar surge + battery",
+    "date": "2020-05-25",
+    "start": "10:00",
+    "end": "15:00",
+    "pv_multiplier": 44,
+    "consumer_profile": "residential_society",
+    "target_bus": 11,
+    "battery": {
+      "enabled": true,
+      "bus": 11,
+      "p_max_mw": 2.0,
+      "e_max_mwh": 4.0,
+      "soc_init_pct": 20
+    }
+  },
+  "mode": "evaluate",
+  "provenance": "simulation/calibration.json thresholds (clear day 2020-05-25, window 10:00-15:00)"
+}
